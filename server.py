@@ -1,13 +1,7 @@
 from functools import wraps
 
-# 3rd party
 from flask import Flask, jsonify, request, render_template, send_from_directory
-# from maya import when, MayaInterval
 
-# from utils import parse_course_str, get_class_type
-# from settings import DAYS_PATTERN, CAMPUS_LIST, DB_DIR
-
-# from settings import CAMPUS_LIST
 from data.access import ApiError, database
 
 
@@ -24,6 +18,7 @@ application = Flask(
     # template_folder='frontend/templates',
     # static_folder='frontend/static'
 )
+application.config['JSON_SORT_KEYS'] = False
 application.after_request(add_cors_headers)
 
 

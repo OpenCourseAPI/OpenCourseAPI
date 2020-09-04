@@ -14,6 +14,9 @@ def parse_class_time(data):
         'campus': data.get('Cmp'),
     }
 
+    if converted['days'] and converted['days'] != 'TBA':
+        converted['days'] = converted['days'].replace('R', 'Th')
+
     if not converted['campus']:
         print(data)
 
@@ -146,10 +149,10 @@ class AdvancedScraper(BaseSSBScraper):
 
                 if is_first_row_for_class:
                     class_data = last_class = parse_class_data(data)
-                    class_data['time'] = [class_time_data]
+                    class_data['times'] = [class_time_data]
                 else:
                     class_data = last_class
-                    class_data['time'].append(class_time_data)
+                    class_data['times'].append(class_time_data)
 
                 the_holy_grail[class_data['dept']][class_data['course']][class_data['CRN']] = class_data
 

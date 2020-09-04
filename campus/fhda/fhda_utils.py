@@ -1,6 +1,6 @@
 from re import match
 
-from settings import COURSE_NAME_PATTERN, COURSE_TYPES_TO_FLAGS
+from .fhda_settings import COURSE_NAME_PATTERN, COURSE_TYPES_TO_FLAGS
 
 class ValidationError(Exception):
     def __init__(self, message: str, details: str):

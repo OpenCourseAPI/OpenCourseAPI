@@ -2,7 +2,8 @@ from os.path import join
 
 from tinydb import TinyDB
 
-from common import ApiError, DB_DIR
+from common import ApiError
+from .fhda_settings import DB_DIR
 
 
 class FHDACampus:
@@ -28,15 +29,15 @@ class FHDACampus:
         name = f'{year}{self.QUARTER_TO_NUM[quarter]}{self.CAMPUS_TO_NUM[campus]}'
 
         try:
-            db = TinyDB(join(DB_DIR, f'fhda/{name}_database.json'), access_mode='r')
+            db = TinyDB(join(DB_DIR, f'{name}_database.json'), access_mode='r')
         except FileNotFoundError:
             # raise FileNotFoundError
             try:
-                db = TinyDB(join(DB_DIR, f'fhda/new_{name}_database.json'), access_mode='r')
+                db = TinyDB(join(DB_DIR, f'new_{name}_database.json'), access_mode='r')
             except FileNotFoundError:
                 # raise FileNotFoundError
                 try:
-                    db = TinyDB(join(DB_DIR, f'fhda/sched_{name}_database.json'), access_mode='r')
+                    db = TinyDB(join(DB_DIR, f'sched_{name}_database.json'), access_mode='r')
                 except FileNotFoundError:
                     raise FileNotFoundError
 

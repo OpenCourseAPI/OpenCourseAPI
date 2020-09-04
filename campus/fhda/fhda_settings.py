@@ -1,6 +1,14 @@
+from os.path import join
+
+from common import DB_DIR as ROOT_DB_DIR, CACHE_DIR as ROOT_CACHE_DIR
+
 # MyPortal endpoint
 SSB_ROOT_URL = 'https://ssb-prod.ec.fhda.edu'
 SSB_URL = 'https://ssb-prod.ec.fhda.edu/PROD/'
+
+# Directories
+DB_DIR = join(ROOT_DB_DIR, 'fhda')
+CACHE_DIR = join(ROOT_CACHE_DIR, 'fhda')
 
 # Regexes
 COURSE_NAME_PATTERN = r'[FD]0*(\d+\w*)\.?'

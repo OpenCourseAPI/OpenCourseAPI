@@ -1,6 +1,12 @@
+import time
+import re
 from datetime import datetime
+
 from marshmallow import Schema, fields, validate, ValidationError, EXCLUDE
 from marshmallow.decorators import validates, pre_load, post_load
+
+DAYS_PATTERN = f"^{'(M|T|W|Th|F|S|U)?'*7}$"
+
 
 class ClassDataSchema(Schema):
     """
@@ -86,11 +92,17 @@ class ClassDataSchema(Schema):
 
 
 class ClassTimeSchema(Schema):
+    type = fields.Str()
+
     days = fields.Str(required=True)
-    time = fields.Str(required=True)
+    # time = fields.Str(required=True)
+    start_time = fields.Str(required=True)
+    end_time = fields.Str(required=True)
     room = fields.Str(required=True)
     instructor = fields.Str(required=True)
-    campus = fields.Str(required=True)
+    campus = fields.Str(nullable=True)
+
+    # campus = fields.Str(required=True)
     # campus = fields.Str(required=True, validate=validate.OneOf(
     #     ['FH', 'FC', 'FO', 'DA', 'DO', ''] + ['FM'] # 'FM' is only found in archived data
     # ))
@@ -98,6 +110,47 @@ class ClassTimeSchema(Schema):
     class Meta:
         ordered = True
         unknown = EXCLUDE
+
+    @pre_load
+    def split_time(self, data, **kwargs):
+        if 'time' in data and not ('start_time' in data or 'end_time' in data):
+            combo_time = data['time']
+            times = ['TBA', 'TBA'] if combo_time == 'TBA' else combo_time.split('-')
+
+            if len(times) != 2:
+                raise ValidationError(
+                    f"The time string '{combo_time}' has to be 'TBA' or be two times separated by a '-'",
+                    field_name='start_time'
+                )
+
+            data['start_time'] = times[0].strip()
+            data['end_time'] = times[1].strip()
+
+        return data
+
+    @validates('start_time')
+    def validate_start_time(self, date_str):
+        self.validate_time(date_str)
+
+    @validates('end_time')
+    def validate_end_time(self, date_str):
+        self.validate_time(date_str)
+
+    def validate_time(self, time_str):
+        """
+        Validate the time string format
+        """
+        if time_str == 'TBA':
+            return
+        try:
+            time.strptime(time_str, '%I:%M %p')
+        except ValueError:
+            raise ValidationError('Time must be in the format %I:%M %p.')
+
+    @validates('days')
+    def validate_days(self, days_str):
+        if days_str != 'TBA' and not re.match(DAYS_PATTERN, days_str):
+            raise ValidationError('Days string is not "TBA" and validation regex does not match.')
 
 
 class InterimClassDataSchema(ClassDataSchema, ClassTimeSchema):

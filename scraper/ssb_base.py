@@ -151,12 +151,12 @@ class BaseSSBScraper:
                 for cl in section.values():
                     try:
                         data = classDataSchema.load(cl)
-                        classTimes = [classTimeSchema.load(time) for time in cl['time']]
+                        classTimes = [classTimeSchema.load(time) for time in cl['times']]
                     except MarshValidationError as e:
                         print(e, cl)
                         continue
 
-                    data['time'] = classTimes
+                    data['times'] = classTimes
                     db_classes.append(data)
 
         db.drop_tables()

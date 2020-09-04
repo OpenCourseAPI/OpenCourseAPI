@@ -9,8 +9,9 @@ from tinydb import TinyDB
 from tinydb.storages import MemoryStorage
 from marshmallow import ValidationError as MarshValidationError
 
-from owl_models import interimClassDataSchema, classDataSchema, classTimeSchema
-from utils import parse_course_str, ValidationError, log_info, log_err
+from logger import log_info, log_err
+from data.models import interimClassDataSchema, classDataSchema, classTimeSchema
+from .fhda_utils import parse_course_str, ValidationError
 from .fhda_settings import DB_DIR, SSB_URL, HEADERS
 
 CURRENT_TERM_CODES = {'fh': '202121', 'da': '202122'}
@@ -146,7 +147,7 @@ def parse(content, db):
 
                 check_integrity(cl, data, classTime)
 
-                data['time'] = classTime
+                data['times'] = classTime
                 db.table('classes').insert(data)
 
 

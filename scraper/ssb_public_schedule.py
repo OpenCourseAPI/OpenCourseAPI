@@ -60,7 +60,7 @@ class ScheduleScraper(BaseSSBScraper):
                     'course': course,
                     'section': section,
                     'desc': title,
-                    'time': [],
+                    'times': [],
                 }
 
                 last_class = data
@@ -122,7 +122,7 @@ class ScheduleScraper(BaseSSBScraper):
                                     data['start'] = st
                                     data['end'] = end
 
-                            data['time'] = times
+                            data['times'] = times
 
                         elif el.name == 'a':
                             pass
@@ -196,8 +196,7 @@ class ScheduleScraper(BaseSSBScraper):
                 #     '': ''
                 # }
 
-
-                times.append({
+                class_time = {
                     'type': data.get('Type'),
                     'time': data.get('Time'),
                     'days': data.get('Days'),
@@ -208,7 +207,12 @@ class ScheduleScraper(BaseSSBScraper):
 
                     'start': start,
                     'end': end,
-                })
+                }
+
+                if class_time['days'] and class_time['days'] != 'TBA':
+                    class_time['days'] = class_time['days'].replace('R', 'Th')
+
+                times.append(class_time)
 
             else:
                 print('Unhandled stuff')
