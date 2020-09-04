@@ -5,5 +5,8 @@ __pycache__/
 *.json
 .env
 
+db
+db/.cache
+
 # pytest
 .pytest_cache/
