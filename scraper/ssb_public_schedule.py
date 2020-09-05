@@ -41,7 +41,7 @@ class ScheduleScraper(BaseSSBScraper):
             if len(ths) > 0 and len(tds) == 0:
                 # print('Header', headers[0])
                 text = ths[0].get_text().strip()
-                parts = text.split(' - ')
+                parts = [part.strip() for part in text.split(' - ')]
 
                 if len(parts) < 4:
                     print('Welp! this title is borked', parts)
@@ -56,10 +56,9 @@ class ScheduleScraper(BaseSSBScraper):
                     'CRN': crn,
                     'raw_course': f'{dept} {course}{section}',
                     'dept': dept.replace(' ', ''),
-                    # 'course': clean_course_name_str(course),
                     'course': course,
                     'section': section,
-                    'desc': title,
+                    'title': title,
                     'times': [],
                 }
 
@@ -88,15 +87,7 @@ class ScheduleScraper(BaseSSBScraper):
                             text = el.strip()
                             if ' Credits' in text:
                                 units = text.replace(' Credits', '').strip()
-
-                                if 'TO' in units:
-                                    splitted = units.split('TO')
-                                    units = splitted[-1].strip()
-                                elif 'OR' in units:
-                                    splitted = units.split('OR')
-                                    units = splitted[-1].strip()
-
-                                data['units'] = units
+                                data['units'] = self.hooks.clean_units_str(units)
                             else:
                                 pass
                                 # print('Unhandled', el)
@@ -113,14 +104,9 @@ class ScheduleScraper(BaseSSBScraper):
 
                             for time in times:
                                 if 'start' in time and 'end' in time:
-                                    st = datetime.strftime(datetime.strptime(time['start'], '%b %d, %Y'), '%m/%d/%Y')
-                                    end = datetime.strftime(datetime.strptime(time['end'], '%b %d, %Y'), '%m/%d/%Y')
-
-                                    # st = datetime.strftime(datetime.strptime(time['start'], '%d-%b-%Y'), '%m/%d/%Y')
-                                    # end = datetime.strftime(datetime.strptime(time['end'], '%d-%b-%Y'), '%m/%d/%Y')
-
-                                    data['start'] = st
-                                    data['end'] = end
+                                    data['start'] = self.hooks.parse_date(time['start'])
+                                    data['end'] = self.hooks.parse_date(time['end'])
+                                    break
 
                             data['times'] = times
 
@@ -135,6 +121,8 @@ class ScheduleScraper(BaseSSBScraper):
                     data['start'] = 'TBA'
                 if 'end' not in data:
                     data['end'] = 'TBA'
+
+                data = self.hooks.transform_class(data)
 
                 the_holy_grail[data['dept']][data['course']][data['CRN']] = data
                 last_class = None
@@ -180,21 +168,6 @@ class ScheduleScraper(BaseSSBScraper):
                     print('This is just stupiiid')
 
                 campus = ' '.join(data.get('Where').split(' ')[:-1])
-
-                # mapping = {
-                #     # 'De Anza, Main Campus': {'DA'},
-                #     # 'De Anza, Off Campus': {'DO', 'DA'}
-                #     # 'Foothill Sunnyvale Center': {'FC', 'FH'},
-                #     # 'Foothill, Main Campus': {'FO', 'FH'},
-                #     # 'Foothill, Off Campus': {'FO', 'FH'},
-                #     # '': {'FO', 'FH'}
-                #     'De Anza, Main Campus': 'DA',
-                #     'De Anza, Off Campus': 'DO',
-                #     'Foothill Sunnyvale Center': 'FC',
-                #     'Foothill, Main Campus': 'FH',
-                #     'Foothill, Off Campus': 'FO',
-                #     '': ''
-                # }
 
                 class_time = {
                     'type': data.get('Type'),

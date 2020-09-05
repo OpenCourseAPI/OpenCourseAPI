@@ -43,7 +43,7 @@ DA_TYPE_ALIAS = {'standard': None, 'online': 'Z', 'hybrid': 'Y'}
 HEADERS = (
     'raw_course',
     'CRN',
-    'desc',
+    'title',
     'status',
     'days',
     'time',

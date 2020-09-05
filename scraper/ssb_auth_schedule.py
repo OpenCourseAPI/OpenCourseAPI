@@ -20,12 +20,6 @@ def parse_class_time(data):
     if not converted['campus']:
         print(data)
 
-    if converted['time'] == 'TBA' and not converted['days']:
-        converted['days'] = 'TBA'
-
-    # TODO: "unknown" instead of "TBA"
-    if not converted['days']:
-        converted['days'] = 'TBA'
 
     if not converted['room']:
         converted['room'] = 'TBA'
@@ -45,9 +39,8 @@ def parse_class_data(data):
     converted['raw_course'] = converted['dept'] + ' ' + converted['course'] + converted['section']
 
     converted['dept'] = converted['dept'].replace(' ', '')
-    # converted['course'] = clean_course_name_str(converted['course'])
 
-    converted['desc'] = data.get('Title')
+    converted['title'] = data.get('Title')
     converted['units'] = data.get('Cred')
 
     converted['seats'] = data.get('Rem')
@@ -119,8 +112,16 @@ class AdvancedScraper(BaseSSBScraper):
             ths = table_row.find_all('th', recursive=False)
             tds = table_row.find_all('td', recursive=False)
 
-            headers = [th.get_text().strip() for th in ths]
-            data_cols = [td.get_text().strip() for td in tds]
+            def magic_clean(els):
+                cols = []
+                for el in els:
+                    text = el.get_text().strip()
+                    colspan = int(el.get('colspan') or 1)
+                    cols += [text for _ in range(colspan)]
+                return cols
+
+            headers = magic_clean(ths)
+            data_cols = magic_clean(tds)
 
             if len(ths) == 1 and len(tds) == 0:
                 # Department title row
@@ -133,6 +134,9 @@ class AdvancedScraper(BaseSSBScraper):
                 # print('Table Headers: ', headers)
 
             elif len(ths) == 0 and len(tds) > 0:
+                if len(data_cols) != len(last_headers):
+                    print('err Headers and data do not match', last_headers, data_cols)
+
                 # Class row
                 data = {k: v for k, v in zip(last_headers, data_cols) if v}
                 # print('Class Data: ', data)
@@ -154,6 +158,7 @@ class AdvancedScraper(BaseSSBScraper):
                     class_data = last_class
                     class_data['times'].append(class_time_data)
 
+                class_data = self.hooks.transform_class(class_data)
                 the_holy_grail[class_data['dept']][class_data['course']][class_data['CRN']] = class_data
 
             else:

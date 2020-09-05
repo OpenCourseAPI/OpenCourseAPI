@@ -28,8 +28,8 @@ class ClassDataSchema(Schema):
     """
     Course Info
     """
-    # Description
-    desc = fields.Str(required=True)
+    # Course title
+    title = fields.Str(required=True)
     # Class units
     units = fields.Float(required=True, min=0)
 
@@ -81,7 +81,7 @@ class ClassDataSchema(Schema):
 
     @post_load
     def fix(self, data, **kwargs):
-        if not data.get('status') and data.get('seats') and data.get('wait_seats'):
+        if not data.get('status') and data.get('seats') != None and data.get('wait_seats') != None:
             data['status'] = (
                 'open' if data['seats'] > 0 else
                 'waitlist' if data['wait_seats'] > 0 else
@@ -126,31 +126,60 @@ class ClassTimeSchema(Schema):
             data['start_time'] = times[0].strip()
             data['end_time'] = times[1].strip()
 
+        for key in ['start_time', 'end_time']:
+            time_str = data[key]
+            # Validate the time string format
+            if time_str == 'TBA':
+                continue
+            try:
+                parsed_time = time.strptime(time_str, '%I:%M %p')
+            except ValueError:
+                raise ValidationError('Time must be in the format %I:%M %p.', field_name=key)
+
+            data[key] = time.strftime('%I:%M %p', parsed_time)
+
         return data
 
-    @validates('start_time')
-    def validate_start_time(self, date_str):
-        self.validate_time(date_str)
+    @pre_load
+    def fix_days(self, data, **kwargs):
+        if not data['days']:
+            replaced = False
 
-    @validates('end_time')
-    def validate_end_time(self, date_str):
-        self.validate_time(date_str)
+            for key in ['start_time', 'time']:
+                if key in data and data[key] == 'TBA':
+                    data['days'] = 'TBA'
+                    replaced = True
+                    break
 
-    def validate_time(self, time_str):
-        """
-        Validate the time string format
-        """
-        if time_str == 'TBA':
-            return
-        try:
-            time.strptime(time_str, '%I:%M %p')
-        except ValueError:
-            raise ValidationError('Time must be in the format %I:%M %p.')
+            # TODO: "unknown" instead of "TBA"
+            if not replaced:
+                data['days'] = 'TBA'
+
+        return data
 
     @validates('days')
     def validate_days(self, days_str):
         if days_str != 'TBA' and not re.match(DAYS_PATTERN, days_str):
             raise ValidationError('Days string is not "TBA" and validation regex does not match.')
+
+    # @validates('start_time')
+    # def validate_start_time(self, date_str):
+    #     self.validate_time(date_str)
+
+    # @validates('end_time')
+    # def validate_end_time(self, date_str):
+    #     self.validate_time(date_str)
+
+    # def validate_time(self, time_str):
+    #     """
+    #     Validate the time string format
+    #     """
+    #     if time_str == 'TBA':
+    #         return
+    #     try:
+    #         time.strptime(time_str, '%I:%M %p')
+    #     except ValueError:
+    #         raise ValidationError('Time must be in the format %I:%M %p.')
 
 
 class InterimClassDataSchema(ClassDataSchema, ClassTimeSchema):

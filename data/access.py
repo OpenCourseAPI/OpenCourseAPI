@@ -43,7 +43,8 @@ class Database:
 
     def all_courses(self, db: TinyDB):
         courses = db.table('courses').all()
-        return [{'dept': course['dept'], 'course': course['course']} for course in courses]
+        return [{k: v for k, v in course.items() if k != 'classes'} for course in courses]
+        # return [{'dept': course['dept'], 'course': course['course']} for course in courses]
 
     def all_courses_in_dept(self, db: TinyDB, dept: str):
         return db.table('courses').search(

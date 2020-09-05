@@ -1,6 +1,7 @@
 from os import makedirs
 from os.path import join, exists
 from collections import defaultdict
+from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
@@ -13,15 +14,45 @@ from data.models import classDataSchema, classTimeSchema
 SOUP_PARSER = 'lxml'
 
 
+class BaseHooks:
+    DATE_FORMAT = '%b %d, %Y' # '%d-%b-%Y'
+
+    @staticmethod
+    def transform_depts(depts):
+        return depts
+
+    @staticmethod
+    def transform_class(class_data):
+        return class_data
+
+    @classmethod
+    def parse_date(cls, date_str):
+        return datetime.strftime(datetime.strptime(date_str, cls.DATE_FORMAT), '%m/%d/%Y')
+
+    @staticmethod
+    def clean_units_str(units_str):
+        if 'TO' in units_str:
+            splitted = units_str.split('TO')
+            return splitted[-1].strip()
+
+        elif 'OR' in units_str:
+            splitted = units_str.split('OR')
+            return splitted[-1].strip()
+
+        else:
+            return units_str
+
+
 class BaseSSBScraper:
     PREFIX = ''
 
-    def __init__(self, ssb_url, db_dir, cache_dir, login=None, ssb_campus=None, max_terms=-1, start_term=None, use_cache=True, trace=False):
+    def __init__(self, ssb_url, db_dir, cache_dir, hooks=None, login=None, ssb_campus=None, max_terms=-1, start_term=None, use_cache=True, trace=False):
         self.ssb_url = ssb_url
         self.db_dir = db_dir
         self.cache_dir = cache_dir
         self.login = login
         self.ssb_campus = ssb_campus
+        self.hooks = hooks or BaseHooks
 
         self.max_terms = max_terms
         self.start_term = start_term
@@ -118,15 +149,11 @@ class BaseSSBScraper:
 
         for option in options:
             dept_id = option['value']
-            dept_name = option.get_text().strip() or ''
 
             if dept_id:
-                # Remove the trailing "-FH" / "-FD" / "-DA" from department titles
-                # Ex. "Accounting-FD"
-                title_parts = dept_name.split('-')
-                depts[dept_id] = '-'.join(title_parts[:-1]).strip()
+                depts[dept_id] = option.get_text().strip() or ''
 
-        return depts
+        return self.hooks.transform_depts(depts)
 
     def save_classes(self, db, depts, classes):
         db_depts = []
@@ -142,11 +169,8 @@ class BaseSSBScraper:
             })
 
             for course, section in t.items():
-                db_courses.append({
-                    'dept': dept,
-                    'course': course,
-                    'classes': list(section.keys())
-                })
+                course_classes = []
+                course_titles = set()
 
                 for cl in section.values():
                     try:
@@ -158,6 +182,18 @@ class BaseSSBScraper:
 
                     data['times'] = classTimes
                     db_classes.append(data)
+                    course_titles.add(data['title'])
+                    course_classes.append(data['CRN'])
+
+                if len(course_titles) > 1:
+                    log_err(f'Multiple course titles for "{dept} {course}" {str(course_titles)}')
+
+                db_courses.append({
+                    'dept': dept,
+                    'course': course,
+                    'title': course_titles.pop(),
+                    'classes': course_classes
+                })
 
         db.drop_tables()
         db.table('departments').insert_multiple(db_depts)
