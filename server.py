@@ -3,6 +3,7 @@ from functools import wraps
 from flask import Flask, jsonify, request, render_template, send_from_directory
 
 from data.access import ApiError, database
+from settings import CURRENT_YEAR, CURRENT_TERM
 
 
 def add_cors_headers(response):
@@ -37,8 +38,8 @@ def campus_api(path: str, methods=None):
         @application.route(f'/<campus>/{path}', methods=(methods or ['GET']))
         @wraps(func)
         def api(campus, *args, **kwargs):
-            year = request.args.get('year') or 2021
-            quarter = request.args.get('quarter') or 'fall'
+            year = request.args.get('year') or CURRENT_YEAR
+            quarter = request.args.get('quarter') or CURRENT_TERM
 
             try:
                 try:

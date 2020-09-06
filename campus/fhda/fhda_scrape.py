@@ -1,5 +1,8 @@
+import re
 from os.path import join
 from copy import deepcopy
+
+from titlecase import titlecase
 
 from logger import log_err, log_warn
 from scraper.ssb_base import BaseHooks
@@ -14,21 +17,44 @@ ENABLE_ADVANCED = True
 ENABLE_SCHEDULE = True
 
 
+def fix_titles(title: str):
+    '''
+    Clean and change text case of Foothill College course titles
+    '''
+    title = re.sub(r'(\w):(\w)', r'\1: \2', title)
+    title = re.sub(r'(\w),(\w)', r'\1, \2', title)
+    title = titlecase(title)
+    title = re.sub(r'(\b)(Ii|Iii|Iv|v|Ia|Ib)(\b)', lambda match: f'{match.groups()[0]}{match.groups()[1].upper()}{match.groups()[2]}', title)
+    return title
+
+
+def clean_dept_name(name: str):
+    '''
+    Remove the trailing "-FH" / "-FD" / "-DA" from department titles
+    Ex. "Accounting-FD"
+    '''
+    return re.sub(r'^(.*\w)-[FHDA]{2}$', r'\1', name)
+
+
 class FHDAScraperHooks(BaseHooks):
     @staticmethod
     def transform_depts(depts):
         for dept_id, dept_name in depts.items():
             # Remove the trailing "-FH" / "-FD" / "-DA" from department titles
-            # Ex. "Accounting-FD"
-            title_parts = dept_name.split('-')
-            depts[dept_id] = '-'.join(title_parts[:-1]).strip()
+            depts[dept_id] = clean_dept_name(dept_name)
 
         return depts
 
     @staticmethod
     def transform_class(class_data):
         class_data = deepcopy(class_data)
-        class_data['course'] = clean_course_name_str(class_data['course'])
+        course = class_data['course']
+
+        if course.startswith('F'):
+            # Foothill College titles are unfortunately all caps
+            class_data['title'] = fix_titles(class_data['title'])
+
+        class_data['course'] = clean_course_name_str(course)
 
         mapping = {
             # 'De Anza, Main Campus': {'DA'},

@@ -26,7 +26,12 @@ class FHDACampus:
                 f'Invalid quarter name. Possible quarters are {", ".join(self.QUARTER_TO_NUM.keys())}'
             )
 
-        name = f'{year}{self.QUARTER_TO_NUM[quarter]}{self.CAMPUS_TO_NUM[campus]}'
+        quarter_num = self.QUARTER_TO_NUM[quarter]
+        if quarter_num < 3:
+            # If the quarter is summer or fall, then the year should be incremented
+            # Ex. Fall 2020 => 20212X
+            year = int(year) + 1
+        name = f'{year}{quarter_num}{self.CAMPUS_TO_NUM[campus]}'
 
         try:
             db = TinyDB(join(DB_DIR, f'{name}_database.json'), access_mode='r')

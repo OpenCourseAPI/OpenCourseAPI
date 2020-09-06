@@ -10,23 +10,35 @@ from scraper.ssb_public_schedule import ScheduleScraper
 from .wvm_settings import SSB_URL, DB_DIR, CACHE_DIR
 
 
+def clean_dept_name(name: str):
+    '''
+    Remove the trailing " - WVC" / " - MC" from department titles
+    Ex. "Accounting - WVC"
+    '''
+    return re.sub(r'^(.*\w) ?- ?[WVMC]{2,3}$', r'\1', name)
+
+
 class WVMScraperHooks(BaseHooks):
     @staticmethod
     def transform_depts(depts):
         for dept_id, dept_name in depts.items():
-            # Remove the trailing "- WVC" / "- MC" from department titles
+            # Remove the trailing " - WVC" / " - MC" from department titles
             # Ex. "Accounting - WVC"
-            title_parts = dept_name.split('-')
-            depts[dept_id] = '-'.join(title_parts[:-1]).strip()
+            depts[dept_id] = clean_dept_name(dept_name)
 
         return depts
 
     @staticmethod
     def transform_class(class_data):
         class_data = deepcopy(class_data)
+
+        # Replace leading 0's from course name
+        class_data['course'] = re.sub(r'0*(.*)$', r'\1', class_data['course'])
+
         # Titles look something like "Intro to Accounting     (1.5 Lecture)"
         # TODO: the information in the parenthesis can be extracted and saved
         class_data['title'] = re.sub(r'\(.*\)', '', class_data['title']).strip()
+
         return class_data
 
 

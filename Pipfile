@@ -17,6 +17,7 @@ colorama = "*"
 snapshottest = "*"
 click = "*"
 marshmallow = "*"
+titlecase = "*"
 
 [dev-packages]
 
