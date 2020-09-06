@@ -1,0 +1,255 @@
+:root {
+  --background: #303338;
+  --foreground: #40444b;
+  --foreground-hover: #4e5158;
+  --shadow: #303338;
+  --primary-text: #dcddde;
+  --primary-color: rgb(30, 136, 221);
+}
+
+:root.light {
+/* :root { */
+  --background: #eee;
+  --foreground: #ffffff;
+  --foreground-hover: #f3f3f3;
+  --shadow: #DDD;
+  --primary-text: #000;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; }
+}
+
+.root {
+  animation: fadeIn 0.15s;
+}
+
+* {
+  box-sizing: inherit;
+}
+html {
+  box-sizing: border-box;
+}
+html, button, input {
+  font-family: "Nunito", sans-serif;
+  line-height: 1.5;
+}
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  width: 100%;
+}
+body {
+  background: var(--background);
+  color: var(--primary-text);
+  padding: 3em;
+}
+
+
+.title-container {
+  display: flex;
+}
+h1 {
+  font-size: 1.5rem;
+  margin: 0;
+  margin-bottom: 2em;
+}
+.campus-card-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 32px;
+}
+.dept-card-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+}
+.list-view.dept-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.list-view.course-card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+}
+.course-card-container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+}
+.card-view.dept-card-container, .card-view.course-card-container {
+  gap: 16px;
+}
+.card {
+  /* padding: 2em; */
+  padding: 1em;
+  border-radius: 4px;
+  background: var(--foreground);
+  box-shadow: 0 0 16px var(--shadow);
+  transition: 0.2s all;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card.campus {
+  width: 220px;
+  height: 220px;
+}
+.card.dept, .card.course {
+  align-items: flex-start;
+}
+.list-view .card.course {
+  display: flex;
+  flex-flow: row wrap;
+}
+.list-view .card.course .name {
+  margin-top: 0.5em;
+  width: 100%;
+}
+.card-view .card.dept, .card-view .card.course {
+  width: 175px;
+  height: 175px;
+}
+.breadcrumb-view .card.dept .more-info, .list-view .card.dept .more-info {
+  display: none;
+}
+.card.course .more-info {
+  color: #bbb;
+}
+.card.course .course-id {
+  /* width: 1.5em; */
+  padding: 0.2em 0.5em;
+  /* height: 1.8em; */
+  background: #1283c5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-weight: bold;
+}
+.card.course .more-info .counter {
+  width: 1.5em;
+  height: 1.5em;
+  background: #1283c5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.list-view .card.course .counter-label {
+  display: none;
+}
+.card .name {
+  font-size: 1.1rem;
+}
+.card .image {
+  margin-bottom: 1em;
+  width: 96px;
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card .image img {
+  height: 100%;
+  border-radius: 4px;
+}
+.card:hover {
+  background: var(--foreground-hover);
+}
+
+.table-container {
+  /* disabled next two row */
+  /* background: var(--foreground); */
+  /* padding: 0.3em 1em 0.5em 1em; */
+  border-radius: 8px;
+
+  color: #CCC;
+
+  /* border-top: solid 3px #74a0d6;
+  border-bottom: solid 3px #74a0d6; */
+}
+.classes {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  /* border-spacing: 4px; */
+  /* border-spacing: 0 8px; */
+  border-collapse: collapse;
+  width: 100%;
+}
+.classes .none {
+  color: #AAA;
+}
+.classes th {
+  /* disabled next row */
+  /* border-bottom: 1px solid #ddd; */
+
+  color: rgb(96, 159, 255);
+  font-weight: 700;
+}
+/* .classes td { */
+.classes tbody tr {
+  background: var(--foreground);
+}
+.classes td, .classes th {
+  padding: 8px;
+  vertical-align: top;
+}
+/* .classes tr td:first-child {
+  padding-left: 8px;
+}
+.classes tr td:first-child {
+  padding-left: 16px;
+} */
+.classes tr td:last-child, .classes tr th:last-child {
+  padding-right: 16px;
+}
+/* .classes tr:nth-child(even) {
+  background-color: #f2f2f2;
+} */
+.classes tbody tr:hover {
+  background-color: var(--foreground-hover);
+}
+.classes th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  font-weight: normal;
+  /* background-color: #4CAF50;
+  color: white; */
+}
+
+.select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.select-wrapper svg {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  fill: #bdc2d6;
+  right: 8px;
+  pointer-events: none;
+}
+.select-wrapper select {
+  -webkit-appearance: none;
+  color: white;
+  background: var(--foreground);
+  border: none;
+  padding: 0.5em 0.5em;
+  padding-right: 2.5em;
+  border-radius: 4px;
+  outline: none;
+  font-family: Nunito;
+  box-shadow: 0 0 32px #252525;
+  cursor: pointer;
+}

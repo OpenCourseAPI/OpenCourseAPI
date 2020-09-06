@@ -1,0 +1,23 @@
+{
+  "name": "opencourseapi-explorer",
+  "version": "0.1.0",
+  "description": "A clean frontend explorer for data served by OpenCourseAPI",
+  "main": "src/index.js",
+  "license": "MIT",
+  "private": true,
+  "author": "Madhav Varshney <madhavarshney@gmail.com>",
+  "scripts": {
+    "start": "snowpack dev",
+    "build": "snowpack build"
+  },
+  "dependencies": {
+    "preact": "^10.4.8",
+    "preact-router": "^3.2.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@snowpack/plugin-webpack": "^2.0.6",
+    "snowpack": "^2.10.1"
+  }
+}

@@ -2,7 +2,8 @@ __pycache__/
 .venv/
 .idea/
 *.DS_Store
-*.json
+db/*.json
+.vscode/settings.json
 .env
 
 db
