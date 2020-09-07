@@ -20,6 +20,7 @@ application = Flask(
     # static_folder='frontend/static'
 )
 application.config['JSON_SORT_KEYS'] = False
+application.url_map.strict_slashes = False
 application.after_request(add_cors_headers)
 
 
@@ -61,6 +62,16 @@ def campus_api(path: str, methods=None):
 
         return api
     return decorator
+
+
+@application.route('/<campus>')
+def api_campus(campus):
+    try:
+        ret = database.campus_info(campus)
+    except ApiError as e:
+        return jsonify({'error': e.message}), e.status
+
+    return jsonify(ret), 200
 
 
 @campus_api('courses')

@@ -1,8 +1,10 @@
 import re
+import json
 from os.path import join
 from copy import deepcopy
 
 from logger import log_err
+from data.utils import list_dbs
 from scraper.ssb_base import BaseHooks
 from scraper.ssb_auth_schedule import AdvancedScraper
 from scraper.ssb_public_schedule import ScheduleScraper
@@ -52,7 +54,7 @@ if __name__ == '__main__':
                 ssb_campus=ssb_campus,
                 hooks=WVMScraperHooks,
 
-                max_terms=4,
+                # max_terms=4,
                 # use_cache=False,
                 # start_term='201231',
                 trace=True,
@@ -61,3 +63,15 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         log_err('Aborted', start='\n')
+
+    db_files = list_dbs(DB_DIR, prefix=f'sched_')
+    termdbs = []
+
+    for filepath in db_files:
+        matches = re.search(r'sched_(\w{2,3})_([0-9]{6})_database.json$', filepath)
+        if matches and (groups := matches.groups()):
+            campus, term = groups
+            termdbs.append({'campus': campus, 'code': term})
+
+    with open(join(DB_DIR, 'metadata.json'), 'w') as outfile:
+        json.dump({'terms': termdbs}, outfile)

@@ -1,10 +1,13 @@
 import re
+import json
 from os.path import join
 from copy import deepcopy
+from collections import defaultdict
 
 from titlecase import titlecase
 
 from logger import log_err, log_warn
+from data.utils import list_dbs
 from scraper.ssb_base import BaseHooks
 from scraper.ssb_auth_schedule import AdvancedScraper
 from scraper.ssb_public_schedule import ScheduleScraper
@@ -132,3 +135,18 @@ if __name__ == '__main__':
 
         except KeyboardInterrupt:
             log_err('Aborted', start='\n')
+
+    db_files = list_dbs(DB_DIR, filter=r'(sched|new)_[0-9]{6}_database.json$')
+
+    tagdbs = defaultdict(list)
+    termdbs = defaultdict(list)
+
+    for filepath in db_files:
+        matches = re.search(r'(\w*?)_([0-9]{6})_database.json$', filepath)
+        if matches and (groups := matches.groups()):
+            tag, term = groups
+            tagdbs[tag].append(term)
+            termdbs[term].append(tag)
+
+    with open(join(DB_DIR, 'metadata.json'), 'w') as outfile:
+        json.dump({'tags': dict(tagdbs), 'terms': dict(termdbs)}, outfile)

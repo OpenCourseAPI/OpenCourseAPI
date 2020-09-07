@@ -17,9 +17,9 @@ function DeptCard({ id, name, subinfo, setDept }) {
   )
 }
 
-export default function CollegePage({ id, setDept }) {
-  const [depts, error] = useApi(`/${id}/depts`)
-  const college = campus.find((cmp) => cmp.id === id);
+export default function CollegePage({ college, setDept }) {
+  const [depts, error] = useApi(`/${college}/depts`)
+  const colleged = campus.find((cmp) => cmp.id === college);
 
   const cards = depts ? depts.map(({ id: deptId, name }) => (
     <DeptCard
@@ -27,7 +27,7 @@ export default function CollegePage({ id, setDept }) {
       name={name}
       subinfo='12 courses'
       // setDept={setDept}
-      setDept={(dept) => route(`${PATH_PREFIX}/${id}/dept/${dept}`)}
+      setDept={(dept) => route(`${PATH_PREFIX}/${college}/dept/${dept}`)}
     />
   )) : []
 
@@ -37,7 +37,7 @@ export default function CollegePage({ id, setDept }) {
 
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `${PATH_PREFIX}/${id}`, name: college.name },
+    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
   ]
 
   return (
@@ -48,7 +48,7 @@ export default function CollegePage({ id, setDept }) {
         <>
           <BreadCrumbs stack={crumbs} />
           <div class="title-container">
-            <h1>{college.name}</h1>
+            <h1>{colleged.name}</h1>
             <div style="flex: 1"></div>
             <TermPicker />
           </div>

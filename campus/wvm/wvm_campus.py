@@ -1,3 +1,4 @@
+import json
 from os.path import join
 
 from tinydb import TinyDB
@@ -15,6 +16,7 @@ class WVMCampus:
         'summer': 5,
         'fall': 7,
     }
+    NUM_TO_QUARTER = {v: k for k, v in QUARTER_TO_NUM.items()}
     CAMPUS_TO_PREFIX = {
         'wv': 'wvc',
         'mc': 'mc',
@@ -35,6 +37,25 @@ class WVMCampus:
             raise FileNotFoundError
 
         return db
+
+    def list_dbs(self, campus):
+        with open(join(DB_DIR, 'metadata.json'), 'r') as file:
+            metadata = json.loads(file.read())
+            prettyTerms = []
+
+            for info in metadata['terms']:
+                term_campus = info['campus']
+                term = info['code']
+
+                if term_campus != self.CAMPUS_TO_PREFIX[campus]:
+                    continue
+
+                year = int(term[0:4])
+                quarter = self.NUM_TO_QUARTER[int(term[4])]
+
+                prettyTerms.append({'year': year, 'term': quarter, 'code': term})
+
+            return prettyTerms
 
 
 wvm_campus = WVMCampus()

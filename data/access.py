@@ -6,13 +6,22 @@ from campus.registry import ALL_CAMPUS
 
 class Database:
     def load(self, campus, year, quarter):
+        self.validate_campus(campus)
+
+        return ALL_CAMPUS[campus].load_db(campus, year, quarter)
+
+    def campus_info(self, campus):
+        self.validate_campus(campus)
+
+        terms = ALL_CAMPUS[campus].list_dbs(campus)
+        return {'id': campus, 'terms': terms}
+
+    def validate_campus(self, campus):
         if campus not in ALL_CAMPUS:
             raise ApiError(
                 404,
                 f'Campus not found! Available campuses are {", ".join(ALL_CAMPUS.keys())}.'
             )
-
-        return ALL_CAMPUS[campus].load_db(campus, year, quarter)
 
     def all_depts(self, db: TinyDB):
         return db.table('departments').all()

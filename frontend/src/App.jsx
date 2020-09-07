@@ -1,12 +1,12 @@
 import { h } from 'preact'
 import { useState, useCallback } from 'preact/hooks'
-import { Router, route } from 'preact-router';
+import { Router, route } from 'preact-router'
 
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
 import { campus, PATH_PREFIX } from './data'
-import { TermYear } from './state'
+import { TermYear, CampusInfo, useRootApi } from './state'
 
 function CampusCard({ id, name, image, setCollege }) {
   return (
@@ -39,6 +39,17 @@ function HomePage() {
   )
 }
 
+function WrapCampus({ college, page: Page, ...props }) {
+  // TODO: handle error
+  const [meta, error] = useRootApi(`/${college}`)
+
+  return (
+    <CampusInfo.Provider value={meta || {}}>
+      <Page college={college} {...props}/>
+    </CampusInfo.Provider>
+  )
+}
+
 export default function App() {
   const [[term, year], setTermYear] = useState(['fall', '2020'])
   const onPageChange = useCallback((event) => {
@@ -54,9 +65,9 @@ export default function App() {
     <TermYear.Provider value={{term, year, setTermYear}}>
       <Router onChange={onPageChange}>
         <HomePage path="/" />
-        <CollegePage path={`${PATH_PREFIX}/:id`} />
-        <DeptPage path={`${PATH_PREFIX}/:college/dept/:dept`} />
-        <CoursePage path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} />
+        <WrapCampus path={`${PATH_PREFIX}/:college`} page={CollegePage}/>
+        <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept`} page={DeptPage}/>
+        <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} page={CoursePage}/>
       </Router>
     </TermYear.Provider>
   )
