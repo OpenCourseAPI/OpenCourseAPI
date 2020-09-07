@@ -77,8 +77,8 @@ export default function CoursePage({ college, dept, course }) {
   return (
     <div class="root">
       <BreadCrumbs stack={crumbs} />
-      <h1>{dept} {course} @ {colleged.name}</h1>
-      <p style={{ marginTop: 0 }}>{first.dept} {first.course}: {first.title}<br/>{first.units} units</p>
+      <h1 style={{ marginBottom: '1em' }}>{dept} {course} @ {colleged.name}</h1>
+      <p style={{ marginTop: 0 }}>{first.title}&nbsp; · &nbsp;{first.units} units</p>
       <div class="table-container">
         <table class="classes data">
           <thead>
