@@ -125,7 +125,7 @@ export default function DeptPage({ college, dept, setCourse }) {
       <h3>Courses</h3>
       <div class={`course-card-container ${view}`}>{cards}</div>
       <h3 style={{ marginTop: '2em' }}>All Classes</h3>
-      <div style={{ fontSize: '14px' }}>
+      <div class="table-container" style={{ fontSize: '14px' }}>
         <table class="classes data">
           <thead>
             <tr>

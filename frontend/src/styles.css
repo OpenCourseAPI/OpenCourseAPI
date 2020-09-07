@@ -18,13 +18,20 @@
   --primary-text: #000;
 }
 
-@keyframes fadeIn {
+@keyframes fadeInFromRight {
   from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; }
+}
+@keyframes fadeInFromLeft {
+  from { opacity: 0; transform: translateX(-12px); }
   to { opacity: 1; }
 }
 
 .root {
-  animation: fadeIn 0.3s 0.1s backwards ease-out;
+  animation: fadeInFromRight 0.3s 0.1s backwards ease-out;
+}
+.going-back .root {
+  animation: fadeInFromLeft 0.3s 0.1s backwards ease-out;
 }
 
 * {
@@ -50,6 +57,11 @@ body {
   padding: 3em;
 }
 
+@media (max-width: 500px) {
+  body {
+    padding: 1.5em;
+  }
+}
 
 .title-container {
   display: flex;
@@ -65,7 +77,10 @@ h3 {
 .campus-card-container {
   display: flex;
   flex-flow: row wrap;
-  gap: 32px;
+  margin: 0 -16px;
+}
+.campus-card-container .card {
+  margin: 16px;
 }
 .dept-card-container {
   display: flex;
@@ -78,7 +93,12 @@ h3 {
 }
 .list-view.course-card-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+@media (max-width: 500px) {
+  .list-view.course-card-container {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+  }
 }
 .course-card-container {
   display: flex;
@@ -104,6 +124,11 @@ h3 {
 .card.campus {
   width: 220px;
   height: 220px;
+}
+@media (max-width: 500px) {
+  .card.campus {
+    width: 100%;
+  }
 }
 .card.dept, .card.course {
   align-items: flex-start;
@@ -179,6 +204,7 @@ h3 {
   border-radius: 8px;
 
   color: #CCC;
+  overflow: auto;
 
   /* border-top: solid 3px #74a0d6;
   border-bottom: solid 3px #74a0d6; */

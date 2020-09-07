@@ -1,5 +1,5 @@
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useCallback } from 'preact/hooks'
 import { Router, route } from 'preact-router';
 
 import CollegePage from './pages/CollegePage'
@@ -41,9 +41,18 @@ function HomePage() {
 
 export default function App() {
   const [[term, year], setTermYear] = useState(['fall', '2020'])
+  const onPageChange = useCallback((event) => {
+    const urlParts = (url) => url.split('/').length
+    if (event.previous && urlParts(event.url) < urlParts(event.previous)) {
+      document.body.classList.add('going-back')
+    } else {
+      document.body.classList.remove('going-back')
+    }
+  }, [])
+
   return (
     <TermYear.Provider value={{term, year, setTermYear}}>
-      <Router>
+      <Router onChange={onPageChange}>
         <HomePage path="/" />
         <CollegePage path="/campus/:id" />
         <DeptPage path="/campus/:college/dept/:dept" />
