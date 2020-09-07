@@ -1,9 +1,11 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { route } from 'preact-router';
+
 import { campus } from '../data'
 import { useApi } from '../state'
 import TermPicker from '../components/TermPicker'
+import BreadCrumbs from '../components/BreadCrumbs'
 
 // const opt = { year: 'numeric', month: 'short', day: 'numeric' };
 const opt = { month: 'short', day: 'numeric' };
@@ -106,8 +108,15 @@ export default function DeptPage({ college, dept, setCourse }) {
     }
   }
 
+  const crumbs = [
+    { url: '/', name: 'Home' },
+    { url: `/campus/${college}`, name: colleged.name },
+    { url: `/campus/${college}/dept/${dept}`, name: dept },
+  ]
+
   return (
     <div class="root">
+      <BreadCrumbs stack={crumbs} />
       <div class="title-container">
         <h1>{dept} @ {colleged.name}</h1>
         <div style="flex: 1"></div>

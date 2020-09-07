@@ -1,9 +1,11 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { route } from 'preact-router';
+
 import { campus } from '../data'
 import { useApi } from '../state'
 import TermPicker from '../components/TermPicker'
+import BreadCrumbs from '../components/BreadCrumbs'
 
 function DeptCard({ id, name, subinfo, setDept }) {
   return (
@@ -33,12 +35,18 @@ export default function CollegePage({ id, setDept }) {
   // const view = 'breadcrumb-view'
   // const view = 'card-view'
 
+  const crumbs = [
+    { url: '/', name: 'Home' },
+    { url: `/campus/${id}`, name: college.name },
+  ]
+
   return (
     <div class="root">
       {error ? (
         <h3>Not Found! Go back, please</h3>
       ) : (
         <>
+          <BreadCrumbs stack={crumbs} />
           <div class="title-container">
             <h1>{college.name}</h1>
             <div style="flex: 1"></div>

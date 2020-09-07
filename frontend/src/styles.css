@@ -4,7 +4,9 @@
   --foreground-hover: #4e5158;
   --shadow: #303338;
   --primary-text: #dcddde;
-  --primary-color: rgb(30, 136, 221);
+  /* --primary-color: rgb(30, 136, 221); */
+  --active-link: #b7b8b9;
+  --link: rgb(81, 167, 238);
 }
 
 :root.light {
@@ -17,12 +19,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; }
 }
 
 .root {
-  animation: fadeIn 0.15s;
+  animation: fadeIn 0.3s 0.1s backwards ease-in;
 }
 
 * {
@@ -56,6 +58,9 @@ h1 {
   font-size: 1.5rem;
   margin: 0;
   margin-bottom: 2em;
+}
+h3 {
+  margin-top: 0;
 }
 .campus-card-container {
   display: flex;
@@ -252,4 +257,18 @@ h1 {
   font-family: Nunito;
   box-shadow: 0 0 32px #252525;
   cursor: pointer;
+}
+
+.breadcrumbs {
+  margin: 0 -0.5em;
+  margin-bottom: 2em;
+}
+.breadcrumbs a {
+  color: var(--link);
+  text-decoration: none;
+  padding: 0 0.5em;
+}
+.breadcrumbs a.current {
+  color: var(--active-link);
+  cursor: default;
 }

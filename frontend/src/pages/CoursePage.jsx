@@ -1,7 +1,9 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
+
 import { campus } from '../data'
 import { useApi } from '../state'
+import BreadCrumbs from '../components/BreadCrumbs'
 
 const opt = { year: 'numeric', month: 'short', day: 'numeric' };
 const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt);
@@ -65,8 +67,16 @@ export default function CoursePage({ college, dept, course }) {
     }
   }
 
+  const crumbs = [
+    { url: '/', name: 'Home' },
+    { url: `/campus/${college}`, name: colleged.name },
+    { url: `/campus/${college}/dept/${dept}`, name: dept },
+    { url: `/campus/${college}/dept/${dept}/course/${course}`, name: course },
+  ]
+
   return (
     <div class="root">
+      <BreadCrumbs stack={crumbs} />
       <h1>{dept} {course} @ {colleged.name}</h1>
       <p style={{ marginTop: 0 }}>{first.dept} {first.course}: {first.title}<br/>{first.units} units</p>
       <div class="table-container">
