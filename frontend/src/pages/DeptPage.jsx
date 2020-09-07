@@ -1,16 +1,16 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import { route } from 'preact-router';
+import { route } from 'preact-router'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import TermPicker from '../components/TermPicker'
 import BreadCrumbs from '../components/BreadCrumbs'
 
-// const opt = { year: 'numeric', month: 'short', day: 'numeric' };
-const opt = { month: 'short', day: 'numeric' };
-const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt);
-const replaceTBA = (text) => text === 'TBA' ? <span class="none">(none)</span> : text;
+// const opt = { year: 'numeric', month: 'short', day: 'numeric' }
+const opt = { month: 'short', day: 'numeric' }
+const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt)
+const replaceTBA = (text) => text === 'TBA' ? <span class="none">(none)</span> : text
 
 const displayTimes = (time) => {
   const time_string = time.start_time == 'TBA' ? replaceTBA('TBA') : `${time.start_time} - ${time.end_time}`
@@ -21,9 +21,9 @@ const displayTimes = (time) => {
       <td>{time_string}</td>
       <td>{time.location}</td>
     </>
-  );
+  )
     // <td>${time.room}</td>
-};
+}
 
 
 // function DeptCard({ id, name, count, subinfo, setDept }) {
@@ -45,7 +45,7 @@ function DeptCard({ id, name, dept, course, title, count, subinfo, setDept }) {
 export default function DeptPage({ college, dept, setCourse }) {
   const [courses, error] = useApi(`/${college}/depts/${dept}/courses`)
   const [classes, error2] = useApi(`/${college}/depts/${dept}/classes`)
-  const colleged = campus.find((cmp) => cmp.id === college);
+  const colleged = campus.find((cmp) => cmp.id === college)
 
   const cards = courses
     ? courses.map(({ dept, course, title, classes }) => (
@@ -68,16 +68,16 @@ export default function DeptPage({ college, dept, setCourse }) {
   // const view = 'breadcrumb-view'
   // const view = 'card-view'
 
-  const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true;
+  const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true
   const headers = ['CRN', 'Course', 'Title', 'Dates', ...(hasSeatInfo ? ['Status', 'Seats', 'Waitlist'] : []), 'Professor', 'Days', 'Time', 'Location']
   const row_els = []
 
   if (classes) {
     for (const section of classes) {
-      const start = formatDate(section.start);
-      const end = formatDate(section.end);
+      const start = formatDate(section.start)
+      const end = formatDate(section.end)
 
-      const rows = section.times.length;
+      const rows = section.times.length
       const table_rows = [
         section.CRN.toString().padStart(5, '0'),
         `${section.dept} ${section.course}`,

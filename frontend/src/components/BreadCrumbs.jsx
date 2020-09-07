@@ -1,5 +1,5 @@
 import { h, Fragment } from 'preact'
-import Match from 'preact-router/match';
+import Match from 'preact-router/match'
 
 const Link = Match.Link
 

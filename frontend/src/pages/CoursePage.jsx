@@ -5,9 +5,9 @@ import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import BreadCrumbs from '../components/BreadCrumbs'
 
-const opt = { year: 'numeric', month: 'short', day: 'numeric' };
-const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt);
-const replaceTBA = (text) => text === 'TBA' ? <span class="none">(none)</span> : text;
+const opt = { year: 'numeric', month: 'short', day: 'numeric' }
+const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt)
+const replaceTBA = (text) => text === 'TBA' ? <span class="none">(none)</span> : text
 
 const displayTimes = (time) => {
   const time_string = time.start_time == 'TBA' ? replaceTBA('TBA') : `${time.start_time} - ${time.end_time}`
@@ -18,26 +18,26 @@ const displayTimes = (time) => {
       <td>{time_string}</td>
       <td>{time.location}</td>
     </>
-  );
+  )
     // <td>${time.room}</td>
-};
+}
 
 export default function CoursePage({ college, dept, course }) {
   const [classes, error] = useApi(`/${college}/depts/${dept}/courses/${course}/classes`)
-  const colleged = campus.find((cmp) => cmp.id === college);
+  const colleged = campus.find((cmp) => cmp.id === college)
 
   const row_els = []
   const first = (classes && classes[0]) || {}
-  const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true;
+  const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true
   const headers = ['CRN', 'Start', 'End', ...(hasSeatInfo ? ['Status', 'Seats', 'Waitlist'] : []), 'Professor', 'Days', 'Time', 'Location']
   // <th>Room</th>
 
   if (classes) {
     for (const section of classes) {
-      const start = formatDate(section.start);
-      const end = formatDate(section.end);
+      const start = formatDate(section.start)
+      const end = formatDate(section.end)
 
-      const rows = section.times.length;
+      const rows = section.times.length
       const table_rows = [
         // section.CRN,
         section.CRN.toString().padStart(5, '0'),

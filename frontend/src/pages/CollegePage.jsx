@@ -1,6 +1,6 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import { route } from 'preact-router';
+import { route } from 'preact-router'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
@@ -19,7 +19,7 @@ function DeptCard({ id, name, subinfo, setDept }) {
 
 export default function CollegePage({ college, setDept }) {
   const [depts, error] = useApi(`/${college}/depts`)
-  const colleged = campus.find((cmp) => cmp.id === college);
+  const colleged = campus.find((cmp) => cmp.id === college)
 
   const cards = depts ? depts.map(({ id: deptId, name }) => (
     <DeptCard
