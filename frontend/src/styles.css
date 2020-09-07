@@ -19,12 +19,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateX(16px); }
+  from { opacity: 0; transform: translateX(12px); }
   to { opacity: 1; }
 }
 
 .root {
-  animation: fadeIn 0.3s 0.1s backwards ease-in;
+  animation: fadeIn 0.3s 0.1s backwards ease-out;
 }
 
 * {
