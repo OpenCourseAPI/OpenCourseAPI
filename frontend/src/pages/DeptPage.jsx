@@ -2,7 +2,7 @@ import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { route } from 'preact-router';
 
-import { campus } from '../data'
+import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import TermPicker from '../components/TermPicker'
 import BreadCrumbs from '../components/BreadCrumbs'
@@ -58,7 +58,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         count={classes.length}
         subinfo={`class${classes.length > 1 ? 'es' : ''}`}
         // subinfo={`${classes.length} class${classes.length > 1 ? 'es' : ''}`}
-        setDept={(course) => route(`/campus/${college}/dept/${dept}/course/${course}`)}
+        setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}`)}
       />
     ))
     : []
@@ -110,8 +110,8 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `/campus/${college}`, name: colleged.name },
-    { url: `/campus/${college}/dept/${dept}`, name: dept },
+    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
+    { url: `${PATH_PREFIX}/${college}/dept/${dept}`, name: dept },
   ]
 
   return (

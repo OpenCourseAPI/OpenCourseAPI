@@ -1,7 +1,7 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 
-import { campus } from '../data'
+import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import BreadCrumbs from '../components/BreadCrumbs'
 
@@ -69,9 +69,9 @@ export default function CoursePage({ college, dept, course }) {
 
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `/campus/${college}`, name: colleged.name },
-    { url: `/campus/${college}/dept/${dept}`, name: dept },
-    { url: `/campus/${college}/dept/${dept}/course/${course}`, name: course },
+    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
+    { url: `${PATH_PREFIX}/${college}/dept/${dept}`, name: dept },
+    { url: `${PATH_PREFIX}/${college}/dept/${dept}/course/${course}`, name: course },
   ]
 
   return (

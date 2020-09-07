@@ -1,4 +1,7 @@
 module.exports = {
-  // Optimize production builds with Webpack
-  'plugins': [['@snowpack/plugin-webpack', {}]]
+  plugins: [
+    '@snowpack/plugin-dotenv',
+    // Optimize production builds with Webpack
+    ['@snowpack/plugin-webpack', {}]
+  ]
 }

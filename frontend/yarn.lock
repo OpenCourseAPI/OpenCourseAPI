@@ -917,6 +917,14 @@
     execa "^4.0.3"
     npm-run-path "^4.0.1"
 
+"@snowpack/plugin-dotenv@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@snowpack/plugin-dotenv/-/plugin-dotenv-2.0.1.tgz#151bb4136f76f46d19473c535b4a415923e07511"
+  integrity sha512-oeHVdfv6Pg9fMR49fD8ankIlN0NxGVP3WHCVrAZzuWIDeWAQ2iIOopTuIn5H5C3nb3Bce6MBYKq5/UeL8oWQcg==
+  dependencies:
+    dotenv "^8.2.0"
+    dotenv-expand "^5.1.0"
+
 "@snowpack/plugin-run-script@^2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@snowpack/plugin-run-script/-/plugin-run-script-2.1.1.tgz#f0f71cab5e0a482dfceb3306ae3e7d9cab859746"
@@ -2413,6 +2421,16 @@ dot-prop@^5.2.0:
   integrity sha512-uEUyaDKoSQ1M4Oq8l45hSE26SnTxL6snNnqvK/VWx5wJhmff5z0FUVJDKDanor/6w3kzE3i7XZOk+7wC0EXr1A==
   dependencies:
     is-obj "^2.0.0"
+
+dotenv-expand@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
+  integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
+
+dotenv@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
+  integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
 
 duplexify@^3.4.2, duplexify@^3.6.0:
   version "3.7.1"

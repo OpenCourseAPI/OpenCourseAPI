@@ -5,7 +5,7 @@ import { Router, route } from 'preact-router';
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
-import { campus } from './data'
+import { campus, PATH_PREFIX } from './data'
 import { TermYear } from './state'
 
 function CampusCard({ id, name, image, setCollege }) {
@@ -25,7 +25,7 @@ function HomePage() {
       id={id}
       name={name}
       image={image}
-      setCollege={(campus) => route(`/campus/${campus}`)}
+      setCollege={(campus) => route(`${PATH_PREFIX}/${campus}`)}
     />
   ))
 
@@ -54,9 +54,9 @@ export default function App() {
     <TermYear.Provider value={{term, year, setTermYear}}>
       <Router onChange={onPageChange}>
         <HomePage path="/" />
-        <CollegePage path="/campus/:id" />
-        <DeptPage path="/campus/:college/dept/:dept" />
-        <CoursePage path="/campus/:college/dept/:dept/course/:course" />
+        <CollegePage path={`${PATH_PREFIX}/:id`} />
+        <DeptPage path={`${PATH_PREFIX}/:college/dept/:dept`} />
+        <CoursePage path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} />
       </Router>
     </TermYear.Provider>
   )
