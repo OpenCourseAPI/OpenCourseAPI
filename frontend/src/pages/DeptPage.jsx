@@ -53,36 +53,26 @@ export default function DeptPage({ college, dept, setCourse }) {
   const [filteredClasses, setFilteredClasses] = useState([])
 
   useEffect(() => {
-    if (courses && classes) {
-      let filteredCourses = matchSorter(courses, query, {
+    if (courses && classes) {      
+      const filteredClasses = matchSorter(classes, query, {
         keys: [
+          {minRanking: matchSorter.rankings.MATCHES, key: 'times.0.instructor'},
+          {minRanking: matchSorter.rankings.MATCHES, key: 'times.1.instructor'},
           item => item.dept + ' ' + item.course,
           {threshold: matchSorter.rankings.EQUAL, key: 'course'},
-          {minRanking: matchSorter.rankings.MATCHES, key: 'title'}
+          {threshold: matchSorter.rankings.CONTAINS, key: 'title'},
+          'CRN',
         ]
       })
-      
-      if (filteredCourses && filteredCourses.length) {
-        setFilteredCourses(filteredCourses)
-        const filteredCRNS = new Set(filteredCourses.map(course => course.classes).flat())
-        setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
-      } else {
-        const filteredClasses = matchSorter(classes, query, {
-          keys: [
-            'CRN',
-            {minRanking: matchSorter.rankings.MATCHES, key: 'times.0.instructor'}
-          ]
-        })
 
-        const filteredCRNS = new Set(filteredClasses.map(course => course.CRN))
+      const filteredCRNS = new Set(filteredClasses.map(course => course.CRN))
 
-        let filteredCourses = courses.map(course => {
-          return {...course, classes: Array.from(setIntersection(new Set(course.classes), filteredCRNS))}
-        })
+      let filteredCourses = courses.map(course => {
+        return {...course, classes: Array.from(setIntersection(new Set(course.classes), filteredCRNS))}
+      })
 
-        setFilteredCourses(filteredCourses.filter(course => course.classes.length))
-        setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
-      }
+      setFilteredCourses(filteredCourses.filter(course => course.classes.length))
+      setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
     }
   }, [courses, classes, query])
 
