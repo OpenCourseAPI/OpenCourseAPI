@@ -1,10 +1,11 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { route } from 'preact-router'
+import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
-import TermPicker from '../components/TermPicker'
+import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
 
 // const opt = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -47,9 +48,28 @@ export default function DeptPage({ college, dept, setCourse }) {
   const [classes, error2] = useApi(`/${college}/depts/${dept}/classes`)
   const colleged = campus.find((cmp) => cmp.id === college)
 
-  const cards = courses
-    ? courses.map(({ dept, course, title, classes }) => (
-      <DeptCard
+  const [query, setQuery] = useState('')
+  const [filteredCourses, setFilteredCourses] = useState([])
+  const [filteredClasses, setFilteredClasses] = useState([])
+
+  useEffect(() => {
+    if (courses && classes) {
+      setFilteredCourses(
+        matchSorter(courses, query, {
+          keys: [
+            item => item.dept + ' ' + item.course,
+            {threshold: matchSorter.rankings.EQUAL, key: 'course'},
+            {minRanking: matchSorter.rankings.MATCHES, key: 'title'}
+          ]
+        })
+      )
+      const filteredCRNS = new Set(filteredCourses.map(course => course.classes).flat())
+      setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
+    }
+  }, [courses, classes, query])
+
+  const cards = (filteredCourses && filteredCourses.length) || courses
+    ? ((filteredCourses.length && filteredCourses) || courses).map(({ dept, course, title, classes }) => <DeptCard
         id={course}
         dept={dept}
         course={course}
@@ -60,7 +80,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         // subinfo={`${classes.length} class${classes.length > 1 ? 'es' : ''}`}
         setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}`)}
       />
-    ))
+    )
     : []
 
 
@@ -72,8 +92,8 @@ export default function DeptPage({ college, dept, setCourse }) {
   const headers = ['CRN', 'Course', 'Title', 'Dates', ...(hasSeatInfo ? ['Status', 'Seats', 'Waitlist'] : []), 'Professor', 'Days', 'Time', 'Location']
   const row_els = []
 
-  if (classes) {
-    for (const section of classes) {
+  if ((filteredClasses && filteredClasses.length) || classes) {
+    for (const section of ((filteredClasses.length && filteredClasses) || classes)) {
       const start = formatDate(section.start)
       const end = formatDate(section.end)
 
@@ -120,7 +140,7 @@ export default function DeptPage({ college, dept, setCourse }) {
       <div class="title-container">
         <h1>{dept} @ {colleged.name}</h1>
         <div style="flex: 1"></div>
-        <TermPicker />
+        <Header query={query} setQuery={setQuery}/>
       </div>
       <h3>Courses</h3>
       <div class={`course-card-container ${view}`}>{cards}</div>

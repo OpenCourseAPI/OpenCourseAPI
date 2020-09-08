@@ -1,10 +1,11 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import { route } from 'preact-router'
+import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
-import TermPicker from '../components/TermPicker'
+import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
 
 function DeptCard({ id, name, subinfo, setDept }) {
@@ -21,7 +22,23 @@ export default function CollegePage({ college, setDept }) {
   const [depts, error] = useApi(`/${college}/depts`)
   const colleged = campus.find((cmp) => cmp.id === college)
 
-  const cards = depts ? depts.map(({ id: deptId, name }) => (
+  const [query, setQuery] = useState(null)
+  const [filteredDepts, setFilteredDepts] = useState([])
+
+  useEffect(() => {
+    if (depts) {
+      setFilteredDepts(
+        matchSorter(depts, query, {
+          keys: [
+            'id',
+            {minRanking: matchSorter.rankings.MATCHES, key: 'name'}
+          ]
+        })
+      )
+    }
+  }, [depts, query])
+
+  const cards = filteredDepts || depts ? (filteredDepts || depts).map(({ id: deptId, name }) => (
     <DeptCard
       id={deptId}
       name={name}
@@ -50,7 +67,7 @@ export default function CollegePage({ college, setDept }) {
           <div class="title-container">
             <h1>{colleged.name}</h1>
             <div style="flex: 1"></div>
-            <TermPicker />
+            <Header query={query} setQuery={setQuery}/>
           </div>
           <h3>Departments</h3>
           <div class={`dept-card-container ${view}`}>{cards}</div>
