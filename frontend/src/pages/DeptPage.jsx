@@ -54,15 +54,15 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   useEffect(() => {
     if (courses && classes) {
-      setFilteredCourses(
-        matchSorter(courses, query, {
-          keys: [
-            item => item.dept + ' ' + item.course,
-            {threshold: matchSorter.rankings.EQUAL, key: 'course'},
-            {minRanking: matchSorter.rankings.MATCHES, key: 'title'}
-          ]
-        })
-      )
+      const filteredCourses = matchSorter(courses, query, {
+        keys: [
+          item => item.dept + ' ' + item.course,
+          {threshold: matchSorter.rankings.EQUAL, key: 'course'},
+          {minRanking: matchSorter.rankings.MATCHES, key: 'title'}
+        ]
+      })
+      setFilteredCourses(filteredCourses)
+      
       const filteredCRNS = new Set(filteredCourses.map(course => course.classes).flat())
       setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
     }
