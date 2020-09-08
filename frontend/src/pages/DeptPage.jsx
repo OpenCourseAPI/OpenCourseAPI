@@ -6,6 +6,7 @@ import matchSorter from 'match-sorter'
 import { campus, PATH_PREFIX } from '../data'
 import { setIntersection } from '../utils'
 import { useApi } from '../state'
+import { CampusNotFound, DeptNotFound } from '../components/NotFound'
 import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
 
@@ -44,9 +45,12 @@ function DeptCard({ id, name, dept, course, title, count, subinfo, setDept }) {
 }
 
 export default function DeptPage({ college, dept, setCourse }) {
-  const [courses, error] = useApi(`/${college}/depts/${dept}/courses`)
-  const [classes, error2] = useApi(`/${college}/depts/${dept}/classes`)
   const colleged = campus.find((cmp) => cmp.id === college)
+
+  if (!colleged) return <CampusNotFound />
+
+  const [courses, coursesError] = useApi(`/${college}/depts/${dept}/courses`)
+  const [classes, classesError] = useApi(`/${college}/depts/${dept}/classes`)
 
   const [query, setQuery] = useState('')
   const [filteredCourses, setFilteredCourses] = useState([])
@@ -87,7 +91,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         count={classes.length}
         subinfo={`class${classes.length > 1 ? 'es' : ''}`}
         // subinfo={`${classes.length} class${classes.length > 1 ? 'es' : ''}`}
-        setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}`)}
+        setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}${window.location.search}`)}
       />
     ))
     : []
@@ -140,9 +144,35 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
-    { url: `${PATH_PREFIX}/${college}/dept/${dept}`, name: dept },
+    { url: `${PATH_PREFIX}/${college}${window.location.search}`, name: colleged.name },
+    { url: `${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`, name: dept },
   ]
+
+  let content;
+
+  if ((coursesError || classesError) == 'NOT_FOUND') {
+    content = <DeptNotFound backLink={crumbs[crumbs.length - 2].url} />
+  } else {
+    content = (
+      <>
+        <h3>Courses</h3>
+        <div class={`course-card-container ${view}`}>{cards}</div>
+        <h3 style={{ marginTop: '2em' }}>All Classes</h3>
+        <div class="table-container" style={{ fontSize: '14px' }}>
+          <table class="classes data">
+            <thead>
+              <tr>
+                {headers.map((name) =>  <th>{name}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {row_els}
+            </tbody>
+          </table>
+        </div>
+      </>
+    )
+  }
 
   return (
     <div class="root">
@@ -152,21 +182,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         <div style="flex: 1"></div>
         <Header query={query} setQuery={setQuery}/>
       </div>
-      <h3>Courses</h3>
-      <div class={`course-card-container ${view}`}>{cards}</div>
-      <h3 style={{ marginTop: '2em' }}>All Classes</h3>
-      <div class="table-container" style={{ fontSize: '14px' }}>
-        <table class="classes data">
-          <thead>
-            <tr>
-              {headers.map((name) =>  <th>{name}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {row_els}
-          </tbody>
-        </table>
-      </div>
+      {content}
     </div>
   )
 }

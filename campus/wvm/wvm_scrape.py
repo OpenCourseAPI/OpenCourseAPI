@@ -69,8 +69,8 @@ if __name__ == '__main__':
 
     for filepath in db_files:
         matches = re.search(r'sched_(\w{2,3})_([0-9]{6})_database.json$', filepath)
-        if matches and (groups := matches.groups()):
-            campus, term = groups
+        if matches and matches.groups():
+            campus, term = matches.groups()
             termdbs.append({'campus': campus, 'code': term})
 
     with open(join(DB_DIR, 'metadata.json'), 'w') as outfile:

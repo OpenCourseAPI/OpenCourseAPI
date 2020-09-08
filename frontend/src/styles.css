@@ -315,13 +315,16 @@ h3 {
   }
 }
 
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
 .breadcrumbs {
   margin: 0 -0.5em;
   margin-bottom: 2em;
 }
 .breadcrumbs a {
-  color: var(--link);
-  text-decoration: none;
   padding: 0 0.5em;
 }
 .breadcrumbs a.current {

@@ -143,8 +143,8 @@ if __name__ == '__main__':
 
     for filepath in db_files:
         matches = re.search(r'(\w*?)_([0-9]{6})_database.json$', filepath)
-        if matches and (groups := matches.groups()):
-            tag, term = groups
+        if matches and matches.groups():
+            tag, term = matches.groups()
             tagdbs[tag].append(term)
             termdbs[term].append(tag)
 

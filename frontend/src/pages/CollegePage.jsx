@@ -5,6 +5,7 @@ import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
+import { CampusNotFound } from '../components/NotFound'
 import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
 
@@ -19,9 +20,11 @@ function DeptCard({ id, name, subinfo, setDept }) {
 }
 
 export default function CollegePage({ college, setDept }) {
-  const [depts, error] = useApi(`/${college}/depts`)
   const colleged = campus.find((cmp) => cmp.id === college)
 
+  if (!colleged) return <CampusNotFound />
+
+  const [depts, error] = useApi(`/${college}/depts`)
   const [query, setQuery] = useState('')
   const [filteredDepts, setFilteredDepts] = useState([])
 
@@ -44,7 +47,7 @@ export default function CollegePage({ college, setDept }) {
       id={deptId}
       name={name}
       subinfo='12 courses'
-      setDept={(dept) => route(`${PATH_PREFIX}/${college}/dept/${dept}`)}
+      setDept={(dept) => route(`${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`)}
     />
   )) : []
 
@@ -54,25 +57,23 @@ export default function CollegePage({ college, setDept }) {
 
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
+    { url: `${PATH_PREFIX}/${college}${window.location.search}`, name: colleged.name },
   ]
 
   return (
-    <div class="root">
-      {error ? (
-        <h3>Not Found! Go back, please</h3>
-      ) : (
-        <>
-          <BreadCrumbs stack={crumbs} />
-          <div class="title-container">
-            <h1>{colleged.name}</h1>
-            <div style="flex: 1"></div>
-            <Header query={query} setQuery={setQuery}/>
-          </div>
-          <h3>Departments</h3>
-          <div class={`dept-card-container ${view}`}>{cards}</div>
-        </>
-      )}
-    </div>
+    error == 'NOT_FOUND' ? (
+      <CampusNotFound />
+    ) : (
+      <div class="root">
+        <BreadCrumbs stack={crumbs} />
+        <div class="title-container">
+          <h1>{colleged.name}</h1>
+          <div style="flex: 1"></div>
+          <Header query={query} setQuery={setQuery}/>
+        </div>
+        <h3>Departments</h3>
+        <div class={`dept-card-container ${view}`}>{cards}</div>
+      </div>
+    )
   )
 }

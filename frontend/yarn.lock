@@ -842,7 +842,7 @@
   dependencies:
     mkdirp "^1.0.4"
 
-"@open-wc/webpack-import-meta-loader@^0.4.7":
+"@open-wc/webpack-import-meta-loader@^0.4.6":
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/@open-wc/webpack-import-meta-loader/-/webpack-import-meta-loader-0.4.7.tgz#d8212640a386a66bf06a2a4c101936467839b5a1"
   integrity sha512-F3d1EHRckk2+ZpgEEAgVITp8BU9DYLBhKOhNMREeQ1BwILRIhrt+V1bebpnd0Mz595jzd7Yh1wSibLsXibkCpg==
@@ -933,12 +933,12 @@
     execa "^4.0.3"
     npm-run-path "^4.0.1"
 
-"@snowpack/plugin-webpack@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@snowpack/plugin-webpack/-/plugin-webpack-2.0.6.tgz#8d9e206c5fd1ec829413368584470395eb52bd29"
-  integrity sha512-XbiE9+QLEz7sJchuQP1nu6JCwC/jXstBOE4Kwnx1w2ulTRnN4bFWLHIy4ZCh9zQp3/XH9xinC6+hmJHScbnrfg==
+"@snowpack/plugin-webpack@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@snowpack/plugin-webpack/-/plugin-webpack-2.0.4.tgz#47658cfa21b8f921a2bae5fdef66ec451908095d"
+  integrity sha512-fcDUvfzpmBtTROMKOUrbTiYKi0nFxOZIilSuDoVcvOMkI4tHcBtKPxRO4BviD2M9m/u5Jm/g6HfjNoIN5lIr1Q==
   dependencies:
-    "@open-wc/webpack-import-meta-loader" "^0.4.7"
+    "@open-wc/webpack-import-meta-loader" "^0.4.6"
     babel-loader "^8.1.0"
     core-js "^3.5.0"
     css-loader "^3.5.3"
