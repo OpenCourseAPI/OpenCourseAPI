@@ -9,6 +9,8 @@ export default function DeptSearch(props) {
   }, [setQuery])
 
   return (
-    <input class="form-item" onInput={callback} placeholder={'Search...'} value={query} />
+    <div class="input-wrapper">
+      <input class="form-item" onInput={callback} placeholder={'Search...'} value={query} />
+    </div>
   )
 }

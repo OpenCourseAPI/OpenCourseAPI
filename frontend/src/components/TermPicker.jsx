@@ -1,4 +1,4 @@
-import { h, Fragment } from 'preact'
+import { h } from 'preact'
 import { useContext, useCallback } from 'preact/hooks'
 import { TermYear, CampusInfo } from '../state'
 
@@ -21,11 +21,11 @@ export default function TermPicker() {
     .map(({ term, year }) => ({ name: `${firstCharUpper(term)} ${year}`, value: `${term}-${year}` }))
 
   return (
-    <>
+    <div class="select-wrapper">
       <select class="form-item" onChange={callback} value={`${term}-${year}`}>
         {options.map(({ name, value }) => <option value={value}>{name}</option>)}
       </select>
       {DropdownIcon}
-    </>
+    </div>
   )
 }

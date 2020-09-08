@@ -40,7 +40,7 @@
 html {
   box-sizing: border-box;
 }
-html, button, input {
+html, button, input, select {
   font-family: "Nunito", sans-serif;
   line-height: 1.5;
 }
@@ -63,9 +63,6 @@ body {
   }
 }
 
-.title-container {
-  display: flex;
-}
 h1 {
   font-size: 1.5rem;
   margin: 0;
@@ -258,22 +255,22 @@ h3 {
   color: white; */
 }
 
-.form-wrapper {
-  position: relative;
+.title-container {
   display: flex;
-  align-items: center;
   flex-flow: row wrap;
+  align-items: flex-start;
 }
-.form-wrapper .form-item {
-  margin: 0 0 .5em 1em;
+.form-item {
+  width: 100%;
+  font-size: 14px;
 }
-@media (max-width: 500px) {
-  .form-wrapper .form-item {
-    order: 3;
-    width: 100%;
-  }
+.select-wrapper {
+  margin-left: 1em;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
-.form-wrapper svg {
+.select-wrapper svg {
   width: 12px;
   height: 12px;
   position: absolute;
@@ -281,37 +278,41 @@ h3 {
   right: 8px;
   pointer-events: none;
 }
-@media (max-width: 500px) {
-  .form-wrapper > .form-item {
-    order: 3;
+.select-wrapper select {
+  -webkit-appearance: none;
+  color: white;
+  background: var(--foreground);
+  border: none;
+  padding: 0.5em 0.5em;
+  padding-right: 2.5em;
+  border-radius: 4px;
+  outline: none;
+  box-shadow: 0 0 32px #252525;
+  cursor: pointer;
+}
+.input-wrapper input {
+  -webkit-appearance: none;
+  color: white;
+  background: var(--foreground);
+  border: none;
+  padding: 0.5em 0.5em;
+  padding-right: 2.5em;
+  border-radius: 4px;
+  outline: none;
+  box-shadow: 0 0 32px #252525;
+}
+
+@media (max-width: 700px) {
+  .input-wrapper, .select-wrapper {
     width: 100%;
+    margin-bottom: 1em;
   }
-}
-.form-wrapper select {
-  -webkit-appearance: none;
-  color: white;
-  background: var(--foreground);
-  border: none;
-  padding: 0.5em 0.5em;
-  padding-right: 2.5em;
-  border-radius: 4px;
-  outline: none;
-  font-family: Nunito;
-  box-shadow: 0 0 32px #252525;
-  cursor: pointer;
-}
-.form-wrapper input {
-  -webkit-appearance: none;
-  color: white;
-  background: var(--foreground);
-  border: none;
-  padding: 0.5em 0.5em;
-  padding-right: 2.5em;
-  border-radius: 4px;
-  outline: none;
-  font-family: Nunito;
-  box-shadow: 0 0 32px #252525;
-  cursor: pointer;
+  .input-wrapper {
+    order: 3;
+  }
+  .select-wrapper {
+    margin-left: 0;
+  }
 }
 
 .breadcrumbs {
