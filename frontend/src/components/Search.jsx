@@ -1,7 +1,7 @@
 import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 
-export default function DeptSearch(props) {
+export default function Search(props) {
   const {query, setQuery} = props
 
   const callback = useCallback((event) => {

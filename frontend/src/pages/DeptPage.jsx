@@ -53,7 +53,7 @@ export default function DeptPage({ college, dept, setCourse }) {
   const [filteredClasses, setFilteredClasses] = useState([])
 
   useEffect(() => {
-    if (courses && classes) {      
+    if (courses && classes) {
       const filteredClasses = matchSorter(classes, query, {
         keys: [
           {minRanking: matchSorter.rankings.MATCHES, key: item => item.times.map(time => time.instructor).join(',')},
@@ -76,8 +76,9 @@ export default function DeptPage({ college, dept, setCourse }) {
   }, [courses, classes, query])
 
   const postFilterCourses = (query && filteredCourses) || courses
-  const cards = postFilterCourses && postFilterCourses.length ?
-    postFilterCourses.map(({ dept, course, title, classes }) => <DeptCard
+  const cards = postFilterCourses && postFilterCourses.length
+    ? postFilterCourses.map(({ dept, course, title, classes }) => (
+      <DeptCard
         id={course}
         dept={dept}
         course={course}
@@ -88,7 +89,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         // subinfo={`${classes.length} class${classes.length > 1 ? 'es' : ''}`}
         setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}`)}
       />
-    )
+    ))
     : []
 
 

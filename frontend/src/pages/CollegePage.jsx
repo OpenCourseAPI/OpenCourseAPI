@@ -44,7 +44,6 @@ export default function CollegePage({ college, setDept }) {
       id={deptId}
       name={name}
       subinfo='12 courses'
-      // setDept={setDept}
       setDept={(dept) => route(`${PATH_PREFIX}/${college}/dept/${dept}`)}
     />
   )) : []
