@@ -167,16 +167,16 @@ class ScheduleScraper(BaseSSBScraper):
                     end = 'TBA'
                     print('This is just stupiiid')
 
-                campus = ' '.join(data.get('Where').split(' ')[:-1])
+                # campus = ' '.join(data.get('Where').split(' ')[:-1])
 
                 class_time = {
                     'type': data.get('Type'),
-                    'time': data.get('Time'),
                     'days': data.get('Days'),
-                    'room': data.get('Where').split(' ')[-1],
+                    'time': data.get('Time'),
                     'instructor': data.get('Instructors'),
-                    'campus': campus,
-                    # 'campus': mapping.get(campus),
+                    'location': data.get('Where') or 'TBA',
+                    # 'room': data.get('Where').split(' ')[-1],
+                    # 'campus': campus,
 
                     'start': start,
                     'end': end,

@@ -98,11 +98,11 @@ class ClassTimeSchema(Schema):
     # time = fields.Str(required=True)
     start_time = fields.Str(required=True)
     end_time = fields.Str(required=True)
-    room = fields.Str(required=True)
     instructor = fields.Str(required=True)
-    campus = fields.Str(nullable=True)
+    location = fields.Str(required=True)
+    room = fields.Str()
+    campus = fields.Str()
 
-    # campus = fields.Str(required=True)
     # campus = fields.Str(required=True, validate=validate.OneOf(
     #     ['FH', 'FC', 'FO', 'DA', 'DO', ''] + ['FM'] # 'FM' is only found in archived data
     # ))

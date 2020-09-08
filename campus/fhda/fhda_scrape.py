@@ -20,7 +20,7 @@ ENABLE_ADVANCED = True
 ENABLE_SCHEDULE = True
 
 
-def fix_titles(title: str):
+def fix_title(title: str):
     '''
     Clean and change text case of Foothill College course titles
     '''
@@ -52,10 +52,11 @@ class FHDAScraperHooks(BaseHooks):
     def transform_class(class_data):
         class_data = deepcopy(class_data)
         course = class_data['course']
+        title = class_data['title']
 
-        if course.startswith('F'):
-            # Foothill College titles are unfortunately all caps
-            class_data['title'] = fix_titles(class_data['title'])
+        if title.isupper():
+            # Foothill College titles and past De Anza ones are unfortunately all caps
+            class_data['title'] = fix_title(title)
 
         class_data['course'] = clean_course_name_str(course)
 

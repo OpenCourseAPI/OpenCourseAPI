@@ -9,22 +9,22 @@ def parse_class_time(data):
     converted = {
         'days': data.get('Days'),
         'time': data.get('Time'),
-        'room': data.get('Location'),
         'instructor': data.get('Instructor'),
-        'campus': data.get('Cmp'),
+        'location': data.get('Location') or 'TBA',
+        # 'room': data.get('Location'),
+        # 'campus': data.get('Cmp'),
     }
 
     if converted['days'] and converted['days'] != 'TBA':
         converted['days'] = converted['days'].replace('R', 'Th')
 
-    if not converted['campus']:
-        print(data)
+    # if not converted['campus']:
+    #     print(data)
 
-
-    if not converted['room']:
-        converted['room'] = 'TBA'
-    else:
-        converted['room'] = converted['room'].replace(f'{converted["campus"]} ', '')
+    # if not converted['room']:
+    #     converted['room'] = 'TBA'
+    # else:
+    #     converted['room'] = converted['room'].replace(f'{converted["campus"]} ', '')
 
     return converted
 
@@ -146,8 +146,8 @@ class AdvancedScraper(BaseSSBScraper):
 
                 is_first_row_for_class = data.get('CRN')
 
-                if not is_first_row_for_class and data.get('Cmp') is None and last_class_time:
-                    data['Cmp'] = last_class_time['campus']
+                # if not is_first_row_for_class and data.get('Cmp') is None and last_class_time:
+                #     data['Cmp'] = last_class_time['campus']
 
                 class_time_data = last_class_time = parse_class_time(data)
 
