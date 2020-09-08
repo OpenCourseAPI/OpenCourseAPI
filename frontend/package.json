@@ -19,7 +19,7 @@
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
     "@snowpack/plugin-dotenv": "^2.0.1",
-    "@snowpack/plugin-webpack": "^2.0.6",
+    "@snowpack/plugin-webpack": "2.0.4",
     "snowpack": "^2.10.1"
   }
 }
