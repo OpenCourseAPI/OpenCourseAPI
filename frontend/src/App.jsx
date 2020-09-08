@@ -25,7 +25,7 @@ function HomePage() {
       id={id}
       name={name}
       image={image}
-      setCollege={(campus) => route(`${PATH_PREFIX}/${campus}`)}
+      setCollege={(campus) => route(`${PATH_PREFIX}/${campus}${window.location.search}`)}
     />
   ))
 
@@ -39,19 +39,24 @@ function HomePage() {
   )
 }
 
-function WrapCampus({ college, page: Page, ...props }) {
+function WrapCampus({ college, year, term, page: Page, ...props }) {
   // TODO: handle error
   const [meta, error] = useRootApi(`/${college}`)
 
+  // year and term come from query parameters
+  year = year || '2020'
+  term = term || 'fall'
+
   return (
-    <CampusInfo.Provider value={meta || {}}>
-      <Page college={college} {...props}/>
-    </CampusInfo.Provider>
+    <TermYear.Provider value={{term, year}}>
+      <CampusInfo.Provider value={meta || {}}>
+        <Page college={college} {...props}/>
+      </CampusInfo.Provider>
+    </TermYear.Provider>
   )
 }
 
 export default function App() {
-  const [[term, year], setTermYear] = useState(['fall', '2020'])
   const onPageChange = useCallback((event) => {
     const urlParts = (url) => url.split('/').length
     if (event.previous && urlParts(event.url) < urlParts(event.previous)) {
@@ -62,13 +67,11 @@ export default function App() {
   }, [])
 
   return (
-    <TermYear.Provider value={{term, year, setTermYear}}>
-      <Router onChange={onPageChange}>
-        <HomePage path="/" />
-        <WrapCampus path={`${PATH_PREFIX}/:college`} page={CollegePage}/>
-        <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept`} page={DeptPage}/>
-        <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} page={CoursePage}/>
-      </Router>
-    </TermYear.Provider>
+    <Router onChange={onPageChange}>
+      <HomePage path="/" />
+      <WrapCampus path={`${PATH_PREFIX}/:college`} page={CollegePage}/>
+      <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept`} page={DeptPage}/>
+      <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} page={CoursePage}/>
+    </Router>
   )
 }

@@ -6,6 +6,7 @@ import matchSorter from 'match-sorter'
 import { campus, PATH_PREFIX } from '../data'
 import { setIntersection } from '../utils'
 import { useApi } from '../state'
+import { CampusNotFound } from '../components/NotFound'
 import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
 
@@ -44,9 +45,12 @@ function DeptCard({ id, name, dept, course, title, count, subinfo, setDept }) {
 }
 
 export default function DeptPage({ college, dept, setCourse }) {
+  const colleged = campus.find((cmp) => cmp.id === college)
+
+  if (!colleged) return <CampusNotFound />
+
   const [courses, error] = useApi(`/${college}/depts/${dept}/courses`)
   const [classes, error2] = useApi(`/${college}/depts/${dept}/classes`)
-  const colleged = campus.find((cmp) => cmp.id === college)
 
   const [query, setQuery] = useState('')
   const [filteredCourses, setFilteredCourses] = useState([])
@@ -87,7 +91,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         count={classes.length}
         subinfo={`class${classes.length > 1 ? 'es' : ''}`}
         // subinfo={`${classes.length} class${classes.length > 1 ? 'es' : ''}`}
-        setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}`)}
+        setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}${window.location.search}`)}
       />
     ))
     : []
@@ -140,8 +144,8 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
-    { url: `${PATH_PREFIX}/${college}/dept/${dept}`, name: dept },
+    { url: `${PATH_PREFIX}/${college}${window.location.search}`, name: colleged.name },
+    { url: `${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`, name: dept },
   ]
 
   return (
