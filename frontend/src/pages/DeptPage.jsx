@@ -56,11 +56,10 @@ export default function DeptPage({ college, dept, setCourse }) {
     if (courses && classes) {      
       const filteredClasses = matchSorter(classes, query, {
         keys: [
-          {minRanking: matchSorter.rankings.MATCHES, key: 'times.0.instructor'},
-          {minRanking: matchSorter.rankings.MATCHES, key: 'times.1.instructor'},
-          item => item.dept + ' ' + item.course,
+          {minRanking: matchSorter.rankings.MATCHES, key: item => item.times.map(time => time.instructor).join(',')},
           {threshold: matchSorter.rankings.EQUAL, key: 'course'},
           {threshold: matchSorter.rankings.CONTAINS, key: 'title'},
+          item => item.dept + ' ' + item.course,
           'CRN',
         ]
       })
@@ -76,8 +75,9 @@ export default function DeptPage({ college, dept, setCourse }) {
     }
   }, [courses, classes, query])
 
-  const cards = (query && filteredCourses) || courses
-    ? ((query && filteredCourses) || courses).map(({ dept, course, title, classes }) => <DeptCard
+  const postFilterCourses = (query && filteredCourses) || courses
+  const cards = postFilterCourses && postFilterCourses.length ?
+    postFilterCourses.map(({ dept, course, title, classes }) => <DeptCard
         id={course}
         dept={dept}
         course={course}
@@ -100,8 +100,9 @@ export default function DeptPage({ college, dept, setCourse }) {
   const headers = ['CRN', 'Course', 'Title', 'Dates', ...(hasSeatInfo ? ['Status', 'Seats', 'Waitlist'] : []), 'Professor', 'Days', 'Time', 'Location']
   const row_els = []
 
-  if ((query && filteredClasses) || classes) {
-    for (const section of ((query && filteredClasses) || classes)) {
+  const postFilterClasses = (query && filteredClasses) || classes
+  if (postFilterClasses && postFilterClasses.length) {
+    for (const section of postFilterClasses) {
       const start = formatDate(section.start)
       const end = formatDate(section.end)
 

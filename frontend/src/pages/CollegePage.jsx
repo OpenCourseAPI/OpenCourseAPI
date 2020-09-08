@@ -22,7 +22,7 @@ export default function CollegePage({ college, setDept }) {
   const [depts, error] = useApi(`/${college}/depts`)
   const colleged = campus.find((cmp) => cmp.id === college)
 
-  const [query, setQuery] = useState(null)
+  const [query, setQuery] = useState('')
   const [filteredDepts, setFilteredDepts] = useState([])
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function CollegePage({ college, setDept }) {
       setFilteredDepts(
         matchSorter(depts, query, {
           keys: [
-            'id',
+            {minRanking: matchSorter.rankings.EQUAL, key: 'id'},
             {minRanking: matchSorter.rankings.MATCHES, key: 'name'}
           ]
         })
@@ -38,7 +38,8 @@ export default function CollegePage({ college, setDept }) {
     }
   }, [depts, query])
 
-  const cards = filteredDepts || depts ? (filteredDepts || depts).map(({ id: deptId, name }) => (
+  const postFilterDepts = (query && filteredDepts) || depts
+  const cards = postFilterDepts && postFilterDepts.length ? postFilterDepts.map(({ id: deptId, name }) => (
     <DeptCard
       id={deptId}
       name={name}
