@@ -18,6 +18,7 @@ snapshottest = "*"
 click = "*"
 marshmallow = "*"
 titlecase = "*"
+lxml = "*"
 
 [dev-packages]
 
