@@ -40,7 +40,7 @@
 html {
   box-sizing: border-box;
 }
-html, button, input {
+html, button, input, select {
   font-family: "Nunito", sans-serif;
   line-height: 1.5;
 }
@@ -63,13 +63,10 @@ body {
   }
 }
 
-.title-container {
-  display: flex;
-}
 h1 {
   font-size: 1.5rem;
   margin: 0;
-  margin-bottom: 2em;
+  margin-bottom: 1em;
 }
 h3 {
   margin-top: 0;
@@ -258,9 +255,19 @@ h3 {
   color: white; */
 }
 
-.select-wrapper {
-  position: relative;
+.title-container {
   display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+}
+.form-item {
+  width: 100%;
+  font-size: 14px;
+}
+.select-wrapper {
+  margin-left: 1em;
+  position: relative;
+  display: inline-flex;
   align-items: center;
 }
 .select-wrapper svg {
@@ -280,9 +287,32 @@ h3 {
   padding-right: 2.5em;
   border-radius: 4px;
   outline: none;
-  font-family: Nunito;
   box-shadow: 0 0 32px #252525;
   cursor: pointer;
+}
+.input-wrapper input {
+  -webkit-appearance: none;
+  color: white;
+  background: var(--foreground);
+  border: none;
+  padding: 0.5em 0.5em;
+  padding-right: 2.5em;
+  border-radius: 4px;
+  outline: none;
+  box-shadow: 0 0 32px #252525;
+}
+
+@media (max-width: 700px) {
+  .input-wrapper, .select-wrapper {
+    width: 100%;
+    margin-bottom: 1em;
+  }
+  .input-wrapper {
+    order: 3;
+  }
+  .select-wrapper {
+    margin-left: 0;
+  }
 }
 
 .breadcrumbs {
