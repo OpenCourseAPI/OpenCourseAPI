@@ -9,6 +9,6 @@ export default function DeptSearch(props) {
   }, [setQuery])
 
   return (
-    <input class="form-item" onKeyUp={callback} placeholder={'Search...'} value={query} />
+    <input class="form-item" onInput={callback} placeholder={'Search...'} value={query} />
   )
 }

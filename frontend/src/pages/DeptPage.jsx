@@ -4,6 +4,7 @@ import { route } from 'preact-router'
 import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
+import { setIntersection } from '../utils'
 import { useApi } from '../state'
 import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
@@ -25,7 +26,6 @@ const displayTimes = (time) => {
   )
     // <td>${time.room}</td>
 }
-
 
 // function DeptCard({ id, name, count, subinfo, setDept }) {
 function DeptCard({ id, name, dept, course, title, count, subinfo, setDept }) {
@@ -54,22 +54,40 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   useEffect(() => {
     if (courses && classes) {
-      const filteredCourses = matchSorter(courses, query, {
+      let filteredCourses = matchSorter(courses, query, {
         keys: [
           item => item.dept + ' ' + item.course,
           {threshold: matchSorter.rankings.EQUAL, key: 'course'},
           {minRanking: matchSorter.rankings.MATCHES, key: 'title'}
         ]
       })
-      setFilteredCourses(filteredCourses)
       
-      const filteredCRNS = new Set(filteredCourses.map(course => course.classes).flat())
-      setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
+      if (filteredCourses && filteredCourses.length) {
+        setFilteredCourses(filteredCourses)
+        const filteredCRNS = new Set(filteredCourses.map(course => course.classes).flat())
+        setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
+      } else {
+        const filteredClasses = matchSorter(classes, query, {
+          keys: [
+            'CRN',
+            {minRanking: matchSorter.rankings.MATCHES, key: 'times.0.instructor'}
+          ]
+        })
+
+        const filteredCRNS = new Set(filteredClasses.map(course => course.CRN))
+
+        let filteredCourses = courses.map(course => {
+          return {...course, classes: Array.from(setIntersection(new Set(course.classes), filteredCRNS))}
+        })
+
+        setFilteredCourses(filteredCourses.filter(course => course.classes.length))
+        setFilteredClasses(classes.filter(c => filteredCRNS.has(c.CRN)))
+      }
     }
   }, [courses, classes, query])
 
-  const cards = (filteredCourses && filteredCourses.length) || courses
-    ? ((filteredCourses.length && filteredCourses) || courses).map(({ dept, course, title, classes }) => <DeptCard
+  const cards = (query && filteredCourses) || courses
+    ? ((query && filteredCourses) || courses).map(({ dept, course, title, classes }) => <DeptCard
         id={course}
         dept={dept}
         course={course}
@@ -92,8 +110,8 @@ export default function DeptPage({ college, dept, setCourse }) {
   const headers = ['CRN', 'Course', 'Title', 'Dates', ...(hasSeatInfo ? ['Status', 'Seats', 'Waitlist'] : []), 'Professor', 'Days', 'Time', 'Location']
   const row_els = []
 
-  if ((filteredClasses && filteredClasses.length) || classes) {
-    for (const section of ((filteredClasses.length && filteredClasses) || classes)) {
+  if ((query && filteredClasses) || classes) {
+    for (const section of ((query && filteredClasses) || classes)) {
       const start = formatDate(section.start)
       const end = formatDate(section.end)
 
