@@ -61,7 +61,7 @@ export default function CollegePage({ college, setDept }) {
   ]
 
   return (
-    error ? (
+    error == 'NOT_FOUND' ? (
       <CampusNotFound />
     ) : (
       <div class="root">

@@ -35,6 +35,7 @@ export function useApi(path) {
 
     if (response.ok) {
       setData(json)
+      setError(null)
     } else if (response.status === 404) {
       setError('NOT_FOUND')
     }

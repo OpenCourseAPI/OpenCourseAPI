@@ -6,7 +6,7 @@ import matchSorter from 'match-sorter'
 import { campus, PATH_PREFIX } from '../data'
 import { setIntersection } from '../utils'
 import { useApi } from '../state'
-import { CampusNotFound } from '../components/NotFound'
+import { CampusNotFound, DeptNotFound } from '../components/NotFound'
 import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
 
@@ -49,8 +49,8 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   if (!colleged) return <CampusNotFound />
 
-  const [courses, error] = useApi(`/${college}/depts/${dept}/courses`)
-  const [classes, error2] = useApi(`/${college}/depts/${dept}/classes`)
+  const [courses, coursesError] = useApi(`/${college}/depts/${dept}/courses`)
+  const [classes, classesError] = useApi(`/${college}/depts/${dept}/classes`)
 
   const [query, setQuery] = useState('')
   const [filteredCourses, setFilteredCourses] = useState([])
@@ -148,6 +148,32 @@ export default function DeptPage({ college, dept, setCourse }) {
     { url: `${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`, name: dept },
   ]
 
+  let content;
+
+  if ((coursesError || classesError) == 'NOT_FOUND') {
+    content = <DeptNotFound backLink={crumbs[crumbs.length - 2].url} />
+  } else {
+    content = (
+      <>
+        <h3>Courses</h3>
+        <div class={`course-card-container ${view}`}>{cards}</div>
+        <h3 style={{ marginTop: '2em' }}>All Classes</h3>
+        <div class="table-container" style={{ fontSize: '14px' }}>
+          <table class="classes data">
+            <thead>
+              <tr>
+                {headers.map((name) =>  <th>{name}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {row_els}
+            </tbody>
+          </table>
+        </div>
+      </>
+    )
+  }
+
   return (
     <div class="root">
       <BreadCrumbs stack={crumbs} />
@@ -156,21 +182,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         <div style="flex: 1"></div>
         <Header query={query} setQuery={setQuery}/>
       </div>
-      <h3>Courses</h3>
-      <div class={`course-card-container ${view}`}>{cards}</div>
-      <h3 style={{ marginTop: '2em' }}>All Classes</h3>
-      <div class="table-container" style={{ fontSize: '14px' }}>
-        <table class="classes data">
-          <thead>
-            <tr>
-              {headers.map((name) =>  <th>{name}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {row_els}
-          </tbody>
-        </table>
-      </div>
+      {content}
     </div>
   )
 }

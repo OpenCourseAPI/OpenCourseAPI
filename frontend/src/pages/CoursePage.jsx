@@ -4,6 +4,7 @@ import { useState, useEffect } from 'preact/hooks'
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import BreadCrumbs from '../components/BreadCrumbs'
+import { CampusNotFound, DeptNotFound, CourseNotFound } from '../components/NotFound'
 
 const opt = { year: 'numeric', month: 'short', day: 'numeric' }
 const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt)
@@ -23,9 +24,11 @@ const displayTimes = (time) => {
 }
 
 export default function CoursePage({ college, dept, course }) {
-  const [classes, error] = useApi(`/${college}/depts/${dept}/courses/${course}/classes`)
   const colleged = campus.find((cmp) => cmp.id === college)
 
+  if (!colleged) return <CampusNotFound />
+
+  const [classes, error] = useApi(`/${college}/depts/${dept}/courses/${course}/classes`)
   const row_els = []
   const first = (classes && classes[0]) || {}
   const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true
@@ -74,21 +77,33 @@ export default function CoursePage({ college, dept, course }) {
     { url: `${PATH_PREFIX}/${college}/dept/${dept}/course/${course}${window.location.search}`, name: course },
   ]
 
+  let content;
+
+  if (error == 'NOT_FOUND') {
+    content = <CourseNotFound backLink={crumbs[crumbs.length - 2].url} />
+  } else {
+    content = (
+      <>
+        <p style={{ marginTop: 0 }}>{first.title}&nbsp; · &nbsp;{first.units} units</p>
+        <div class="table-container">
+          <table class="classes data">
+            <thead>
+              <tr>
+                {headers.map((name) =>  <th>{name}</th>)}
+              </tr>
+            </thead>
+            <tbody>{row_els}</tbody>
+          </table>
+        </div>
+      </>
+    )
+  }
+
   return (
     <div class="root">
       <BreadCrumbs stack={crumbs} />
       <h1 style={{ marginBottom: '1em' }}>{dept} {course} @ {colleged.name}</h1>
-      <p style={{ marginTop: 0 }}>{first.title}&nbsp; · &nbsp;{first.units} units</p>
-      <div class="table-container">
-        <table class="classes data">
-          <thead>
-            <tr>
-              {headers.map((name) =>  <th>{name}</th>)}
-            </tr>
-          </thead>
-          <tbody>{row_els}</tbody>
-        </table>
-      </div>
+      {content}
     </div>
   )
 }

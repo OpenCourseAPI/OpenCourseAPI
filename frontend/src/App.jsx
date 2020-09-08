@@ -5,6 +5,7 @@ import { Router, route } from 'preact-router'
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
+import { PageNotFound } from './components/NotFound'
 import { campus, PATH_PREFIX } from './data'
 import { TermYear, CampusInfo, useRootApi } from './state'
 
@@ -72,6 +73,7 @@ export default function App() {
       <WrapCampus path={`${PATH_PREFIX}/:college`} page={CollegePage}/>
       <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept`} page={DeptPage}/>
       <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} page={CoursePage}/>
+      <PageNotFound default />
     </Router>
   )
 }
