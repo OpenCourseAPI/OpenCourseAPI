@@ -262,16 +262,9 @@ h3 {
   position: relative;
   display: flex;
   align-items: center;
-  flex-flow: row wrap;
 }
-.form-wrapper .form-item {
-  margin: 0 0 .5em 1em;
-}
-@media (max-width: 500px) {
-  .form-wrapper .form-item {
-    order: 3;
-    width: 100%;
-  }
+.form-wrapper > .form-item {
+  margin-left: 1em;
 }
 .form-wrapper svg {
   width: 12px;
@@ -280,12 +273,6 @@ h3 {
   fill: #bdc2d6;
   right: 8px;
   pointer-events: none;
-}
-@media (max-width: 500px) {
-  .form-wrapper > .form-item {
-    order: 3;
-    width: 100%;
-  }
 }
 .form-wrapper select {
   -webkit-appearance: none;
