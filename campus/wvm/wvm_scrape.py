@@ -15,7 +15,7 @@ from scraper.ssb_auth_schedule import AdvancedScraper
 from scraper.ssb_public_schedule import ScheduleScraper
 from scraper.postprocess import postprocess_dbs
 
-from .wvm_settings import SSB_URL, DB_DIR, CACHE_DIR, NUM_TO_QUARTER
+from .wvm_settings import SSB_URL, DB_DIR, CACHE_DIR, NUM_TO_QUARTER, PREFIX_TO_CAMPUS
 
 
 def clean_dept_name(name: str):
@@ -26,10 +26,12 @@ def clean_dept_name(name: str):
     return re.sub(r'^(.*\w) ?- ?[WVMC]{2,3}$', r'\1', name)
 
 
-def get_term_info(term):
-    year = int(term[0:4])
-    quarter = NUM_TO_QUARTER[int(term[4])]
-    return year, quarter
+def get_term_info(campus):
+    def get_info(term):
+        year = int(term[0:4])
+        quarter = NUM_TO_QUARTER[int(term[4])]
+        return year, quarter, PREFIX_TO_CAMPUS[campus]
+    return get_info
 
 
 def load_db(term, tag, campus, readonly=False):
@@ -104,4 +106,4 @@ if __name__ == '__main__':
 
     for campus, term_dbs in ddd.items():
         db = TinyDB(join(DB_DIR, f'multi_{campus}_database.json'))
-        postprocess_dbs(db, term_dbs, campus=campus, get_term_info=get_term_info, load_db=load_db)
+        postprocess_dbs(db, term_dbs, campus=campus, get_term_info=get_term_info(campus), load_db=load_db)

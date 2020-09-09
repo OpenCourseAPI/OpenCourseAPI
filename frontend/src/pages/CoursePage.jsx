@@ -29,6 +29,7 @@ export default function CoursePage({ college, dept, course }) {
         'Waitlist'
       ] : []
     ),
+    'Type',
     'Professor',
     'Days',
     'Time',

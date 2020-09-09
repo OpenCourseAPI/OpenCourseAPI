@@ -23,21 +23,21 @@ export default function InstructorPage({ college, id }) {
   const groupedClasses = {}
 
   if (instructor) {
-    instructor.classes.sort((a, b) => b.term_code - a.term_code).map(({ term, year, dept, course, seats_taken }) => {
+    instructor.classes.sort((a, b) => b.term_code - a.term_code).map(({ term, year, campus: campusId, dept, course, seats_taken }) => {
       const title = firstCharUpper(`${term} ${year}`)
 
       if (!groupedClasses[title]) groupedClasses[title] = []
 
-      // let text = `Taught ${dept} ${course}`
-      let text = ``
       let courseName = `${dept} ${course}`
+      // let text = `Taught ${dept} ${course}`
+      let text = ` at ${campus.find(cmp => cmp.id == campusId).name}`
 
       if (seats_taken != undefined && seats_taken != null) text += ` to ${seats_taken} students`
 
       groupedClasses[title].push(
         <div>
           <span>Taught </span>
-          <Link href={`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}?year=${year}&term=${term}`}>{courseName}</Link>
+          <Link href={`${PATH_PREFIX}/${campusId}/dept/${dept}/course/${course}?year=${year}&term=${term}`}>{courseName}</Link>
           {text}
         </div>
       )
@@ -55,7 +55,7 @@ export default function InstructorPage({ college, id }) {
           {/* <div style="flex: 1"></div> */}
           {/* <Header query={query} setQuery={setQuery}/> */}
         </div>
-        {instructor && (
+        {instructor && instructor.email && (
           <div>Email: <a href={`mailto:${instructor.email}`}>{instructor.email}</a></div>
         )}
         <div style={{ lineHeight: 2 }}>

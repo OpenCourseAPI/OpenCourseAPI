@@ -38,6 +38,7 @@ function ClassTimeCols({ time, campusId }) {
 
   return (
     <>
+      <td>{time.type || '?'}</td>
       <td>{instructors || '?'}</td>
       <td>{replaceTBA(time.days || '?')}</td>
       <td>{timeString || '?'}</td>

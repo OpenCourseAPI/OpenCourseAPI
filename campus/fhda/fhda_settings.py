@@ -25,6 +25,12 @@ QUARTER_TO_NUM = {
 }
 NUM_TO_QUARTER = {v: k for k, v in QUARTER_TO_NUM.items()}
 
+CAMPUS_TO_NUM = {
+    'fh': 1,
+    'da': 2
+}
+NUM_TO_CAMPUS = {v: k for k, v in CAMPUS_TO_NUM.items()}
+
 '''
 Course Type Flags - Foothill College
 

@@ -156,8 +156,13 @@ class ScheduleScraper(BaseSSBScraper):
 
                 def add_partial_last():
                     if last_name:
-                        normalized = self.hooks.clean_instructor_name(last_name)
-                        instructors.append({'full_name': normalized})
+                        full_name = self.hooks.clean_instructor_name(last_name)
+                        pretty_id = full_name.lower().replace(' ', '-')
+                        instructors.append({
+                            'id': sha224(pretty_id.encode()).hexdigest(),
+                            'pretty_id': pretty_id,
+                            'full_name': full_name
+                        })
 
                 for node in instr_td.contents:
                     if isinstance(node, str):

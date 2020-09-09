@@ -17,7 +17,7 @@ from scraper.ssb_public_schedule import ScheduleScraper
 from scraper.postprocess import postprocess_dbs
 
 from .fhda_login import login
-from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR, NUM_TO_QUARTER
+from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR, NUM_TO_QUARTER, NUM_TO_CAMPUS
 from .fhda_utils import clean_course_name_str
 
 ENABLE_ADVANCED = True
@@ -47,13 +47,14 @@ def get_term_info(term):
     year = int(term[0:4])
     quarter_num = int(term[4])
     quarter = NUM_TO_QUARTER[quarter_num]
+    term_campus = NUM_TO_CAMPUS[int(term[5])]
 
     if quarter_num < 3:
         # If the quarter is summer or fall, then the year should be incremented
         # Ex. Fall 2020 => 20212X
         year -= 1
 
-    return year, quarter
+    return year, quarter, term_campus
 
 
 def load_db(term, tag, campus, readonly=False):

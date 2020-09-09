@@ -13,3 +13,8 @@ QUARTER_TO_NUM = {
     'fall': 7,
 }
 NUM_TO_QUARTER = {v: k for k, v in QUARTER_TO_NUM.items()}
+CAMPUS_TO_PREFIX = {
+    'wv': 'wvc',
+    'mc': 'mc',
+}
+PREFIX_TO_CAMPUS = {v: k for k, v in CAMPUS_TO_PREFIX.items()}
