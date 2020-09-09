@@ -16,6 +16,15 @@ COURSE_NAME_PATTERN = r'[FD]0*(\d+\w*)\.?'
 # Available Campuses - Foothill, De Anza, and test
 CAMPUS_LIST = {'fh': '202121', 'da': '202122', 'test': 'test'}
 
+# Cool stuff
+QUARTER_TO_NUM = {
+    'summer': 1,
+    'fall': 2,
+    'winter': 3,
+    'spring': 4
+}
+NUM_TO_QUARTER = {v: k for k, v in QUARTER_TO_NUM.items()}
+
 '''
 Course Type Flags - Foothill College
 

@@ -1,16 +1,10 @@
 from collections import defaultdict
 from datetime import datetime
+from hashlib import sha256, sha224
 
 from bs4 import BeautifulSoup
 
 from .ssb_base import BaseSSBScraper, SOUP_PARSER
-
-# CACHE_DIR = join(DB_DIR, '.cache', 'scrape_schedule')
-# CACHE_DIR = join(DB_DIR, '.cache', 'scrape_schedule', 'western_colorada')
-# CACHE_DIR = join(DB_DIR, '.cache', 'scrape_schedule', 'tennessee_knoxville')
-# CACHE_DIR = join(DB_DIR, '.cache', 'scrape_schedule', 'west_valley_mission')
-# SOUP_PARSER = 'lxml'
-# SOUP_PARSER = 'html5lib'
 
 
 class ScheduleScraper(BaseSSBScraper):
@@ -156,6 +150,45 @@ class ScheduleScraper(BaseSSBScraper):
                 data = dict(zip(table_headers, data_cols))
                 dates = data.get('Date Range')
 
+                instr_td = tds[table_headers.index('Instructors')]
+                instructors = []
+                last_name = ''
+
+                def add_partial_last():
+                    if last_name:
+                        normalized = self.hooks.clean_instructor_name(last_name)
+                        instructors.append({'full_name': normalized})
+
+                for node in instr_td.contents:
+                    if isinstance(node, str):
+                        if node.strip().startswith(','):
+                            add_partial_last()
+                            last_name = node
+                        else:
+                            last_name += node
+                    else:
+                        if node.name == 'a':
+                            full_name = self.hooks.clean_instructor_name(last_name)
+                            email = node.get('href').replace('mailto:', '').strip()
+
+                            instructors.append({
+                                'id': sha224(email.encode()).hexdigest(),
+                                'pretty_id': full_name.lower().replace(' ', '-'),
+                                'full_name': full_name,
+                                'display_name': node.get('target').strip(),
+                                'email': email
+                            })
+                            last_name = ''
+
+                        elif node.name == 'abbr':
+                            last_name  += node.get_text()
+                            pass
+
+                        else:
+                            print('idk what this is', node)
+
+                add_partial_last()
+
                 if not dates or dates == 'TBA':
                     start = 'TBA'
                     end = 'TBA'
@@ -173,8 +206,9 @@ class ScheduleScraper(BaseSSBScraper):
                     'type': data.get('Type'),
                     'days': data.get('Days'),
                     'time': data.get('Time'),
-                    'instructor': data.get('Instructors'),
+                    'instructor': instructors,
                     'location': data.get('Where') or 'TBA',
+                    # 'instructor': data.get('Instructors'),
                     # 'room': data.get('Where').split(' ')[-1],
                     # 'campus': campus,
 

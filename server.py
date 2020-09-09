@@ -64,6 +64,33 @@ def campus_api(path: str, methods=None):
     return decorator
 
 
+def campus_multi_term_api(path: str, methods=None):
+    def decorator(func):
+        @application.route(f'/<campus>/{path}', methods=(methods or ['GET']))
+        @wraps(func)
+        def api(campus, *args, **kwargs):
+            try:
+                try:
+                    db = database.load_multi_db(campus)
+                    ret = func(db, *args, **kwargs)
+                except FileNotFoundError:
+                    raise ApiError(
+                        404,
+                        'Data for requested campus does not exist.'
+                    )
+
+                if ret is None or (isinstance(ret, list) and len(ret) == 0):
+                    raise ApiError(404, 'No results')
+
+            except ApiError as e:
+                return jsonify({'error': e.message}), e.status
+
+            return jsonify(ret), 200
+
+        return api
+    return decorator
+
+
 @application.route('/<campus>')
 def api_campus(campus):
     try:
@@ -72,6 +99,11 @@ def api_campus(campus):
         return jsonify({'error': e.message}), e.status
 
     return jsonify(ret), 200
+
+
+@campus_multi_term_api('instructors/<instructor>')
+def api_one_instructor(db, instructor):
+    return database.one_instructor(db, instructor)
 
 
 @campus_api('courses')

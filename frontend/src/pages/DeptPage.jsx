@@ -129,6 +129,7 @@ export default function DeptPage({ college, dept, setCourse }) {
         <div class={`course-card-container ${view}`}>{cards}</div>
         <h3 style={{ marginTop: '2em' }}>All Classes</h3>
         <ClassesTable
+          campusId={college}
           headers={headers}
           classes={postFilterClasses}
           getClassColumns={(section) => {

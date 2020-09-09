@@ -2,14 +2,20 @@ import re
 import json
 from os.path import join
 from copy import deepcopy
+from collections import defaultdict
+
+from tinydb import TinyDB, where
+from tinydb.storages import JSONStorage
+from tinydb.middlewares import CachingMiddleware
 
 from logger import log_err
 from data.utils import list_dbs
 from scraper.ssb_base import BaseHooks
 from scraper.ssb_auth_schedule import AdvancedScraper
 from scraper.ssb_public_schedule import ScheduleScraper
+from scraper.postprocess import postprocess_dbs
 
-from .wvm_settings import SSB_URL, DB_DIR, CACHE_DIR
+from .wvm_settings import SSB_URL, DB_DIR, CACHE_DIR, NUM_TO_QUARTER
 
 
 def clean_dept_name(name: str):
@@ -18,6 +24,21 @@ def clean_dept_name(name: str):
     Ex. "Accounting - WVC"
     '''
     return re.sub(r'^(.*\w) ?- ?[WVMC]{2,3}$', r'\1', name)
+
+
+def get_term_info(term):
+    year = int(term[0:4])
+    quarter = NUM_TO_QUARTER[int(term[4])]
+    return year, quarter
+
+
+def load_db(term, tag, campus, readonly=False):
+    db_path = join(DB_DIR, f'{tag}_{campus}_{term}_database.json')
+
+    if readonly:
+        return TinyDB(db_path, access_mode='r', storage=CachingMiddleware(JSONStorage))
+    else:
+        return TinyDB(db_path)
 
 
 class WVMScraperHooks(BaseHooks):
@@ -57,7 +78,7 @@ if __name__ == '__main__':
                 # max_terms=4,
                 # use_cache=False,
                 # start_term='201231',
-                trace=True,
+                # trace=True,
             )
             scraper.run()
 
@@ -75,3 +96,12 @@ if __name__ == '__main__':
 
     with open(join(DB_DIR, 'metadata.json'), 'w') as outfile:
         json.dump({'terms': termdbs}, outfile)
+
+    ddd = defaultdict(lambda: defaultdict(list))
+
+    for info in termdbs:
+        ddd[info['campus']][info['code']] = ['sched']
+
+    for campus, term_dbs in ddd.items():
+        db = TinyDB(join(DB_DIR, f'multi_{campus}_database.json'))
+        postprocess_dbs(db, term_dbs, campus=campus, get_term_info=get_term_info, load_db=load_db)

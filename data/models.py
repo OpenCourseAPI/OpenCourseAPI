@@ -50,6 +50,8 @@ class ClassDataSchema(Schema):
     # Number of open seats
     # seats = fields.Int(required=True, min=0)
     seats = fields.Int(min=0)
+    # Number of filled / taken seats
+    seats_taken = fields.Int(min=0)
     # Number of open waitlist seats
     # wait_seats = fields.Int(required=True, min=0)
     wait_seats = fields.Int(min=0)
@@ -98,7 +100,9 @@ class ClassTimeSchema(Schema):
     # time = fields.Str(required=True)
     start_time = fields.Str(required=True)
     end_time = fields.Str(required=True)
-    instructor = fields.Str(required=True)
+    # instructor = fields.Str(required=True)
+    # instructor = fields.List(fields.Str(), required=True)
+    instructor = fields.List(fields.Raw(), required=True)
     location = fields.Str(required=True)
     room = fields.Str()
     campus = fields.Str()

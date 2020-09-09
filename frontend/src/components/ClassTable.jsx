@@ -1,4 +1,7 @@
 import { h, Fragment } from 'preact'
+import Match from 'preact-router/match'
+
+const Link = Match.Link
 
 const replaceTBA = (text) => (
   text === 'TBA'
@@ -8,7 +11,7 @@ const replaceTBA = (text) => (
     : text
 )
 
-function ClassTimeCols({ time }) {
+function ClassTimeCols({ time, campusId }) {
   const timeString = time.start_time == 'TBA'
     ? replaceTBA('TBA')
     : `${time.start_time || '?'} - ${time.end_time || '?'}`
@@ -20,14 +23,16 @@ function ClassTimeCols({ time }) {
   //   .join(', ')
 
   const instructors = (time.instructor || [])
-    .map(({ full_name, display_name, email }, index, arr) => {
+    .map(({ full_name, display_name, email, pretty_id }, index, arr) => {
       let name = display_name || full_name
 
       if (index < arr.length - 1) {
         name += ', '
       }
 
-      return email ? <a href={`mailto:${email}`} title={email}>{name}</a> : <span>{name}</span>
+      return pretty_id
+        ? <Link href={`/explore/${campusId}/instructor/${pretty_id}`} title={email}>{name}</Link>
+        : <span>{name}</span>
     })
     .flat()
 
@@ -41,7 +46,7 @@ function ClassTimeCols({ time }) {
   )
 }
 
-export default function ClassesTable({ headers, classes, getClassColumns }) {
+export default function ClassesTable({ campusId, headers, classes, getClassColumns }) {
   if (!classes) return <></>
 
   const tableRowEls = []
@@ -53,7 +58,7 @@ export default function ClassesTable({ headers, classes, getClassColumns }) {
     tableRowEls.push(
       <tr>
         {tableCols.map((name) => <td rowspan={numRows}>{name}</td>)}
-        <ClassTimeCols time={section.times[0] || {}} />
+        <ClassTimeCols campusId={campusId} time={section.times[0] || {}} />
       </tr>
     )
 
@@ -61,7 +66,7 @@ export default function ClassesTable({ headers, classes, getClassColumns }) {
       if (!time) continue
       tableRowEls.push(
         <tr>
-          <ClassTimeCols time={time} />
+          <ClassTimeCols campusId={campusId} time={time} />
         </tr>
       )
     }

@@ -5,15 +5,19 @@ from copy import deepcopy
 from collections import defaultdict
 
 from titlecase import titlecase
+from tinydb import TinyDB, where
+from tinydb.storages import JSONStorage
+from tinydb.middlewares import CachingMiddleware
 
-from logger import log_err, log_warn
+from logger import log, log_info, log_err, log_warn
 from data.utils import list_dbs
 from scraper.ssb_base import BaseHooks
 from scraper.ssb_auth_schedule import AdvancedScraper
 from scraper.ssb_public_schedule import ScheduleScraper
+from scraper.postprocess import postprocess_dbs
 
 from .fhda_login import login
-from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR
+from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR, NUM_TO_QUARTER
 from .fhda_utils import clean_course_name_str
 
 ENABLE_ADVANCED = True
@@ -37,6 +41,28 @@ def clean_dept_name(name: str):
     Ex. "Accounting-FD"
     '''
     return re.sub(r'^(.*\w)-[FHDA]{2}$', r'\1', name)
+
+
+def get_term_info(term):
+    year = int(term[0:4])
+    quarter_num = int(term[4])
+    quarter = NUM_TO_QUARTER[quarter_num]
+
+    if quarter_num < 3:
+        # If the quarter is summer or fall, then the year should be incremented
+        # Ex. Fall 2020 => 20212X
+        year -= 1
+
+    return year, quarter
+
+
+def load_db(term, tag, campus, readonly=False):
+    db_path = join(DB_DIR, f'{tag}_{term}_database.json')
+
+    if readonly:
+        return TinyDB(db_path, access_mode='r', storage=CachingMiddleware(JSONStorage))
+    else:
+        return TinyDB(db_path)
 
 
 class FHDAScraperHooks(BaseHooks):
@@ -105,10 +131,10 @@ if __name__ == '__main__':
                 hooks=FHDAScraperHooks,
                 login=login,
 
-                max_terms=4,
+                max_terms=8,
                 # use_cache=False,
                 # start_term='202042',
-                trace=True,
+                # trace=True,
             )
             scraper.run()
 
@@ -127,10 +153,10 @@ if __name__ == '__main__':
                 hooks=FHDAScraperHooks,
                 # login=login,
 
-                max_terms=4,
+                max_terms=8,
                 # use_cache=False,
-                # start_term='202042',
-                trace=True,
+                # start_term='202111',
+                # trace=True,
             )
             scraper.run()
 
@@ -151,3 +177,6 @@ if __name__ == '__main__':
 
     with open(join(DB_DIR, 'metadata.json'), 'w') as outfile:
         json.dump({'tags': dict(tagdbs), 'terms': dict(termdbs)}, outfile)
+
+    db = TinyDB(join(DB_DIR, 'multi_database.json'))
+    postprocess_dbs(db, termdbs, get_term_info=get_term_info, load_db=load_db)

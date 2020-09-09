@@ -52,6 +52,7 @@ export default function CoursePage({ college, dept, course }) {
           {(first && first.title) || ''}&nbsp; · &nbsp;{first ? first.units : 'X'} units
         </p>
         <ClassesTable
+          campusId={college}
           headers={headers}
           classes={classes}
           getClassColumns={(section) => {
