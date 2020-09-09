@@ -122,6 +122,9 @@ h3 {
   width: 220px;
   height: 220px;
 }
+.card.campus .name {
+  text-align: center;
+}
 @media (max-width: 500px) {
   .card.campus {
     width: 100%;

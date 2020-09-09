@@ -40,3 +40,18 @@ export function CourseNotFound({ backLink }) {
     </p>
   )
 }
+
+export function ErrorPage() {
+  return (
+    <div class="root">
+      <h1>Oh no!</h1>
+      <div>
+        We hit an error -&nbsp;
+        <a href="/">Click here to go back home</a>
+      </div>
+      <div style={{ marginTop: '1em' }}>
+        <i>If you're a dev, you can check the dev console =D</i>
+      </div>
+    </div>
+  )
+}

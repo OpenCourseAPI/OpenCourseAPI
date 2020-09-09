@@ -1,11 +1,11 @@
 import { h } from 'preact'
-import { useState, useCallback } from 'preact/hooks'
+import { useCallback, useErrorBoundary } from 'preact/hooks'
 import { Router, route } from 'preact-router'
 
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
-import { PageNotFound, CampusNotFound } from './components/NotFound'
+import { PageNotFound, CampusNotFound, ErrorPage } from './components/NotFound'
 import { campus, PATH_PREFIX } from './data'
 import { TermYear, CampusInfo, useRootApi } from './state'
 
@@ -59,6 +59,10 @@ function WrapCampus({ college, year, term, page: Page, ...props }) {
 }
 
 export default function App() {
+  const [error, resetError] = useErrorBoundary(
+    error => console.error(error)
+  )
+
   const onPageChange = useCallback((event) => {
     const urlParts = (url) => url.split('/').length
     if (event.previous && urlParts(event.url) < urlParts(event.previous)) {
@@ -67,6 +71,8 @@ export default function App() {
       document.body.classList.remove('going-back')
     }
   }, [])
+
+  if (error) return <ErrorPage />
 
   return (
     <Router onChange={onPageChange}>
