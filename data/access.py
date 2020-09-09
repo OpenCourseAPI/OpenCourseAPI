@@ -10,6 +10,16 @@ class Database:
 
         return ALL_CAMPUS[campus].load_db(campus, year, quarter)
 
+    def load_multi_db(self, campus):
+        self.validate_campus(campus)
+
+        return ALL_CAMPUS[campus].load_multi_db(campus)
+
+    def one_instructor(self, db, instructor):
+        return db.table('instructors').get(
+            where('pretty_id') == instructor
+        )
+
     def campus_info(self, campus):
         self.validate_campus(campus)
 

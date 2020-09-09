@@ -37,19 +37,20 @@ class FHDACampus:
         name = f'{year}{quarter_num}{self.CAMPUS_TO_NUM[campus]}'
 
         try:
-            db = TinyDB(join(DB_DIR, f'{name}_database.json'), access_mode='r')
+            db = TinyDB(join(DB_DIR, f'merge_{name}_database.json'), access_mode='r')
         except FileNotFoundError:
-            # raise FileNotFoundError
             try:
-                db = TinyDB(join(DB_DIR, f'new_{name}_database.json'), access_mode='r')
+                db = TinyDB(join(DB_DIR, f'sched_{name}_database.json'), access_mode='r')
             except FileNotFoundError:
-                # raise FileNotFoundError
                 try:
-                    db = TinyDB(join(DB_DIR, f'sched_{name}_database.json'), access_mode='r')
+                    db = TinyDB(join(DB_DIR, f'new_{name}_database.json'), access_mode='r')
                 except FileNotFoundError:
                     raise FileNotFoundError
 
         return db
+
+    def load_multi_db(self, campus):
+        return TinyDB(join(DB_DIR, 'multi_database.json'), access_mode='r')
 
     def list_dbs(self, campus):
         with open(join(DB_DIR, 'metadata.json'), 'r') as file:

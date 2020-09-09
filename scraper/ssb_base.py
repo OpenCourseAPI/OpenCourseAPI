@@ -1,3 +1,4 @@
+import re
 from os import makedirs
 from os.path import join, exists
 from collections import defaultdict
@@ -8,7 +9,7 @@ from bs4 import BeautifulSoup
 from tinydb import TinyDB
 from marshmallow import ValidationError as MarshValidationError
 
-from logger import log, log_info, log_err, log_trace
+from logger import log, log_info, log_warn, log_trace
 from data.models import classDataSchema, classTimeSchema
 
 SOUP_PARSER = 'lxml'
@@ -41,6 +42,11 @@ class BaseHooks:
 
         else:
             return units_str
+
+    @staticmethod
+    def clean_instructor_name(name):
+        # Replace ', ' with '', '(P)' with '', '   ' (n spaces) with ' ' (one space)
+        return re.sub(r'\s+', ' ', re.sub(r'(?:, )|(?:\(\w?\))', '', name)).strip()
 
 
 class BaseSSBScraper:
@@ -186,7 +192,7 @@ class BaseSSBScraper:
                     course_classes.append(data['CRN'])
 
                 if len(course_titles) > 1:
-                    log_err(f'Multiple course titles for "{dept} {course}" {str(course_titles)}')
+                    log_warn(f'Multiple course titles for "{dept} {course}" {str(course_titles)}')
 
                 db_courses.append({
                     'dept': dept,

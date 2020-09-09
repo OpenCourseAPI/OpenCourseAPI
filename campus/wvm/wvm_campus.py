@@ -38,6 +38,9 @@ class WVMCampus:
 
         return db
 
+    def load_multi_db(self, campus):
+        return TinyDB(join(DB_DIR, f'multi_{self.CAMPUS_TO_PREFIX[campus]}_database.json'), access_mode='r')
+
     def list_dbs(self, campus):
         with open(join(DB_DIR, 'metadata.json'), 'r') as file:
             metadata = json.loads(file.read())

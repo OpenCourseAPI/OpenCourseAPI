@@ -2,14 +2,17 @@ from collections import defaultdict
 
 from bs4 import BeautifulSoup
 
-from .ssb_base import BaseSSBScraper, SOUP_PARSER
+from .ssb_base import BaseSSBScraper, BaseHooks, SOUP_PARSER
 
 
-def parse_class_time(data):
+def parse_class_time(data, hooks: BaseHooks):
+    instructors = data.get('Instructor')
+    instructors = [{'full_name': hooks.clean_instructor_name(name)} for name in instructors.split(',')] if instructors else []
+
     converted = {
         'days': data.get('Days'),
         'time': data.get('Time'),
-        'instructor': data.get('Instructor'),
+        'instructor': instructors,
         'location': data.get('Location') or 'TBA',
         # 'room': data.get('Location'),
         # 'campus': data.get('Cmp'),
@@ -44,6 +47,7 @@ def parse_class_data(data):
     converted['units'] = data.get('Cred')
 
     converted['seats'] = data.get('Rem')
+    converted['seats_taken'] = data.get('Act')
     converted['wait_seats'] = data.get('WL Rem')
     # converted['wait_cap'] = 0
 
@@ -149,7 +153,7 @@ class AdvancedScraper(BaseSSBScraper):
                 # if not is_first_row_for_class and data.get('Cmp') is None and last_class_time:
                 #     data['Cmp'] = last_class_time['campus']
 
-                class_time_data = last_class_time = parse_class_time(data)
+                class_time_data = last_class_time = parse_class_time(data, self.hooks)
 
                 if is_first_row_for_class:
                     class_data = last_class = parse_class_data(data)
