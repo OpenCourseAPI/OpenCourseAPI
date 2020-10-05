@@ -1,8 +1,11 @@
 from functools import wraps
 
 from flask import Flask, jsonify, request, render_template, send_from_directory
+from marshmallow import ValidationError
+from werkzeug.exceptions import BadRequest
 
 from data.access import ApiError, database
+from common import batchClassesSchema
 
 
 def add_cors_headers(response):
@@ -31,6 +34,23 @@ application.after_request(add_cors_headers)
 # @application.route('/')
 # def idx():
 #     return render_template('index.html')
+
+
+def load_and_validate_body(schema):
+    '''
+    Loads, validates, and returns the JSON body from a request,
+    raising errors as appropriate,
+    '''
+
+    if not request.is_json:
+        raise ApiError(400, 'JSON body not specified.')
+
+    try:
+        return schema.load(request.json)
+    except BadRequest as e:
+        raise ApiError(400, 'Invalid JSON provided in body.')
+    except ValidationError as e:
+        raise ApiError(400, f'Request data format has not been followed: {str(e)}')
 
 
 def campus_api(path: str, methods=None):
@@ -92,6 +112,34 @@ def api_courses(db):
 @campus_api('classes')
 def api_classes(db):
     return database.all_classes(db)
+
+
+@campus_api('classes', methods=['POST'])
+def api_batch_classes(db):
+    '''
+    POST /:campus/classes
+
+    Batch request for classes at a campus
+    '''
+    body = load_and_validate_body(batchClassesSchema)
+    resources = body.get('resources')
+
+    def get_resource(resource):
+        crn = resource.get('CRN')
+        dept = resource.get('dept')
+        course = resource.get('course')
+
+        if crn:
+            return database.one_class_by_crn(db, crn)
+        elif dept and course:
+            return database.all_classes_in_course(db, dept, course)
+        elif dept:
+            return database.all_classes_in_dept(db, dept)
+        else:
+            # TODO: should it return None instead?
+            return {'error': 'IDK what you asked for.'}
+
+    return {'resources': list(map(get_resource, resources))}
 
 
 @campus_api('classes/<crn>')
