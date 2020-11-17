@@ -5,7 +5,7 @@ import { Router, route } from 'preact-router'
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
-import { PageNotFound, CampusNotFound, ErrorPage } from './components/NotFound'
+import { PageNotFound, CampusNotFound, ErrorPage, Loading } from './components/NotFound'
 import { campus, PATH_PREFIX } from './data'
 import { TermYear, CampusInfo, useRootApi } from './state'
 
@@ -41,13 +41,15 @@ function HomePage() {
 }
 
 function WrapCampus({ college, year, term, page: Page, ...props }) {
-  const [meta, error] = useRootApi(`/${college}`)
+  const [meta, error, loading] = useRootApi(`/${college}`)
 
+  if (loading) return <Loading />
   if (error == 'NOT_FOUND') return <CampusNotFound />
+  else if (error || !meta) return <ErrorPage />
 
   // year and term come from query parameters
-  year = year || '2020'
-  term = term || 'fall'
+  year = year || meta.current.year
+  term = term || meta.current.term
 
   return (
     <TermYear.Provider value={{term, year}}>
