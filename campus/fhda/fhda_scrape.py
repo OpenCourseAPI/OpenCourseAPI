@@ -1,12 +1,13 @@
 import re
 import json
+import argparse
 from os.path import join
 from copy import deepcopy
 from collections import defaultdict
 
 from titlecase import titlecase
 
-from logger import log_err, log_warn
+from logger import log_err, log_warn, log_info
 from data.utils import list_dbs
 from scraper.ssb_base import BaseHooks
 from scraper.ssb_auth_schedule import AdvancedScraper
@@ -15,9 +16,7 @@ from scraper.ssb_public_schedule import ScheduleScraper
 from .fhda_login import login
 from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR
 from .fhda_utils import clean_course_name_str
-
-ENABLE_ADVANCED = True
-ENABLE_SCHEDULE = True
+from .fhda_scrape_seats import main as scrape_seats
 
 
 def fix_title(title: str):
@@ -95,48 +94,7 @@ class FHDAScraperHooks(BaseHooks):
         return class_data
 
 
-if __name__ == '__main__':
-    if ENABLE_ADVANCED:
-        try:
-            scraper = AdvancedScraper(
-                ssb_url=SSB_URL,
-                db_dir=DB_DIR,
-                cache_dir=CACHE_DIR,
-                hooks=FHDAScraperHooks,
-                login=login,
-
-                max_terms=4,
-                # use_cache=False,
-                # start_term='202042',
-                trace=True,
-            )
-            scraper.run()
-
-        except KeyboardInterrupt:
-            log_err('Aborted', start='\n')
-
-    if ENABLE_SCHEDULE:
-        try:
-            scraper = ScheduleScraper(
-                # ssb_url='https://banssb.western.edu/WOL'
-                # ssb_url='https://bannerssb.utk.edu/kbanpr'
-                # ssb_url='https://ssb-prod.ec.wvm.edu/PROD'
-                ssb_url=SSB_URL,
-                db_dir=DB_DIR,
-                cache_dir=CACHE_DIR,
-                hooks=FHDAScraperHooks,
-                # login=login,
-
-                max_terms=4,
-                # use_cache=False,
-                # start_term='202042',
-                trace=True,
-            )
-            scraper.run()
-
-        except KeyboardInterrupt:
-            log_err('Aborted', start='\n')
-
+def write_metadata():
     db_files = list_dbs(DB_DIR, filter=r'(sched|new)_[0-9]{6}_database.json$')
 
     tagdbs = defaultdict(list)
@@ -151,3 +109,73 @@ if __name__ == '__main__':
 
     with open(join(DB_DIR, 'metadata.json'), 'w') as outfile:
         json.dump({'tags': dict(tagdbs), 'terms': dict(termdbs)}, outfile)
+
+    log_info('Dumped metadata')
+
+
+def run_advanced_scraper(**kwargs):
+    try:
+        scraper = AdvancedScraper(
+            ssb_url=SSB_URL,
+            db_dir=DB_DIR,
+            cache_dir=CACHE_DIR,
+            hooks=FHDAScraperHooks,
+            login=login,
+
+            trace=True,
+            **kwargs,
+        )
+        scraper.run()
+
+    except KeyboardInterrupt:
+        log_err('Aborted advanced schedule scraper', start='\n')
+
+
+def run_public_schedule_scraper(**kwargs):
+    try:
+        scraper = ScheduleScraper(
+            ssb_url=SSB_URL,
+            db_dir=DB_DIR,
+            cache_dir=CACHE_DIR,
+            hooks=FHDAScraperHooks,
+            # login=login,
+
+            trace=True,
+            **kwargs,
+        )
+        scraper.run()
+
+    except KeyboardInterrupt:
+        log_err('Aborted public schedule scraper', start='\n')
+
+
+if __name__ == '__main__':
+    ENABLE_ADVANCED = True
+    ENABLE_SCHEDULE = True
+
+    parser = argparse.ArgumentParser(description='Scrape FHDA data')
+    parser.add_argument('--update', default=False, action='store_true',
+                        help='Update data with seat info')
+    args = parser.parse_args()
+
+    if args.update:
+        run_public_schedule_scraper(
+            max_terms=2,
+            use_cache=False
+        )
+        write_metadata()
+        scrape_seats()
+    else:
+        if ENABLE_ADVANCED:
+            run_advanced_scraper(
+                max_terms=8,
+                # use_cache=False,
+                start_term='202112',
+            )
+        if ENABLE_SCHEDULE:
+            run_public_schedule_scraper(
+                max_terms=16,
+                # use_cache=False,
+                # start_term='202042',
+            )
+        write_metadata()

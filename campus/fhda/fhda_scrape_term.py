@@ -107,6 +107,7 @@ def parse(content, db):
                     data['section'] = section
                     data['status'] = data['status'].lower()
                     data['units'] = data['units'].lstrip()
+                    data['location'] = f"{data['campus']} {data['room']}"
 
                     try:
                         data = interimClassDataSchema.load(data)
