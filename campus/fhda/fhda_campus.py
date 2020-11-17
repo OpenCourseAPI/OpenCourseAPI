@@ -4,7 +4,7 @@ from os.path import join
 from tinydb import TinyDB
 
 from common import ApiError
-from .fhda_settings import DB_DIR
+from .fhda_settings import DB_DIR, CURRENT_YEAR, CURRENT_TERM, CURRENT_TERM_CODES
 
 
 class FHDACampus:
@@ -50,6 +50,9 @@ class FHDACampus:
                     raise FileNotFoundError
 
         return db
+
+    def get_current_term(self, campus):
+        return {'year': CURRENT_YEAR, 'term': CURRENT_TERM, 'code': CURRENT_TERM_CODES[campus]}
 
     def list_dbs(self, campus):
         with open(join(DB_DIR, 'metadata.json'), 'r') as file:

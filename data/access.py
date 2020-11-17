@@ -14,7 +14,14 @@ class Database:
         self.validate_campus(campus)
 
         terms = ALL_CAMPUS[campus].list_dbs(campus)
-        return {'id': campus, 'terms': terms}
+        current_term = self.current_term(campus)
+
+        return {'id': campus, 'current': current_term, 'terms': terms}
+
+    def current_term(self, campus):
+        self.validate_campus(campus)
+
+        return ALL_CAMPUS[campus].get_current_term(campus)
 
     def validate_campus(self, campus):
         if campus not in ALL_CAMPUS:

@@ -1,7 +1,32 @@
-import { h } from 'preact'
+import { h, Fragment } from 'preact'
 import Match from 'preact-router/match'
+import { useEffect, useState } from 'preact/hooks'
 
 const Link = Match.Link
+const LOADING_TIMEOUT = 1000
+
+export function Loading() {
+  const [visible, setVisible] = useState(false)
+
+  // Only show loading page after a 1 second timeout
+  useEffect(() => {
+    const timeout = setTimeout(() => setVisible(true), LOADING_TIMEOUT)
+
+    return () => clearTimeout(timeout)
+  }, [])
+
+  return (
+    <div class="root">
+      {visible && (
+        <>
+          <h1>Loading...</h1>
+          <span>Please give us a second! &nbsp;</span>
+          <Link href="/">Click here to go back to home.</Link>
+        </>
+      )}
+    </div>
+  )
+}
 
 export function PageNotFound() {
   return (

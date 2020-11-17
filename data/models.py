@@ -45,8 +45,8 @@ class ClassDataSchema(Schema):
     Seat info
     """
     # Class status (Open, Waitlist, Full)
-    # status = fields.Str(required=True, validate=validate.OneOf(['open', 'waitlist', 'full']))
-    status = fields.Str(validate=validate.OneOf(['open', 'waitlist', 'full']))
+    # status = fields.Str(required=True, validate=validate.OneOf(['open', 'waitlist', 'full', 'unknown']))
+    status = fields.Str(validate=validate.OneOf(['open', 'waitlist', 'full', 'unknown']))
     # Number of open seats
     # seats = fields.Int(required=True, min=0)
     seats = fields.Int(min=0)
@@ -186,6 +186,28 @@ class InterimClassDataSchema(ClassDataSchema, ClassTimeSchema):
     pass
 
 
+class SeatInfoSchema(Schema):
+    # 5-digit Course Reference Number (ex. 25668)
+    CRN = fields.Int(required=True)
+
+    """
+    Seat info
+    """
+    # Class status (Open, Waitlist, Full)
+    status = fields.Str(required=True, validate=validate.OneOf(['open', 'waitlist', 'full', 'unknown']))
+    # Number of open seats
+    seats = fields.Int(required=True, min=0)
+    # Number of open waitlist seats
+    wait_seats = fields.Int(required=True, min=0)
+    # Waitlist capacity (total # of waitlist seats)
+    wait_cap = fields.Int(required=True, min=0)
+
+    class Meta:
+        ordered = True
+        unknown = EXCLUDE
+
+
 classDataSchema = ClassDataSchema()
 classTimeSchema = ClassTimeSchema()
 interimClassDataSchema = InterimClassDataSchema()
+seatInfoSchema = SeatInfoSchema()

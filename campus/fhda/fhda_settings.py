@@ -13,8 +13,12 @@ CACHE_DIR = join(ROOT_CACHE_DIR, 'fhda')
 # Regexes
 COURSE_NAME_PATTERN = r'[FD]0*(\d+\w*)\.?'
 
-# Available Campuses - Foothill, De Anza, and test
-CAMPUS_LIST = {'fh': '202121', 'da': '202122', 'test': 'test'}
+# Year and term info
+CURRENT_YEAR = 2021
+CURRENT_TERM = 'winter'
+
+# Campus term codes (Foothill & De Anza)
+CURRENT_TERM_CODES = {'fh': '202131', 'da': '202132'}
 
 '''
 Course Type Flags - Foothill College

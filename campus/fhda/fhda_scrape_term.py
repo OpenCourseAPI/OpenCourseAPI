@@ -12,9 +12,7 @@ from marshmallow import ValidationError as MarshValidationError
 from logger import log_info, log_err
 from data.models import interimClassDataSchema, classDataSchema, classTimeSchema
 from .fhda_utils import parse_course_str, ValidationError
-from .fhda_settings import DB_DIR, SSB_URL, HEADERS
-
-CURRENT_TERM_CODES = {'fh': '202121', 'da': '202122'}
+from .fhda_settings import DB_DIR, SSB_URL, HEADERS, CURRENT_TERM_CODES
 
 
 def main():
@@ -109,6 +107,7 @@ def parse(content, db):
                     data['section'] = section
                     data['status'] = data['status'].lower()
                     data['units'] = data['units'].lstrip()
+                    data['location'] = f"{data['campus']} {data['room']}"
 
                     try:
                         data = interimClassDataSchema.load(data)

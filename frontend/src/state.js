@@ -9,37 +9,33 @@ export const TermYear = createContext({})
 export function useRootApi(path) {
   const [data, setData] = useState(null)
   const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  useEffect(async () => {
-    const response = await fetch(`${API_PATH}${path}`)
-    const json = await response.json()
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await fetch(`${API_PATH}${path}`)
+        if (response.ok) {
+          const json = await response.json()
+          setData(json)
+          setError(null)
+        } else if (response.status === 404) {
+          setError('NOT_FOUND')
+        } else {
+          setError('API_ERROR')
+        }
+      } catch (err) {
+        setError('API_ERROR')
+      }
 
-    if (response.ok) {
-      setData(json)
-    } else if (response.status === 404) {
-      setError('NOT_FOUND')
-    }
+      setLoading(false)
+    })()
   }, [path])
 
-  return [data, error]
+  return [data, error, loading]
 }
 
 export function useApi(path) {
-  const [data, setData] = useState(null)
-  const [error, setError] = useState(null)
-  const {term, year} = useContext(TermYear)
-
-  useEffect(async () => {
-    const response = await fetch(`${API_PATH}${path}?year=${year}&quarter=${term}`)
-    const json = await response.json()
-
-    if (response.ok) {
-      setData(json)
-      setError(null)
-    } else if (response.status === 404) {
-      setError('NOT_FOUND')
-    }
-  }, [term, year])
-
-  return [data, error]
+  const { term, year } = useContext(TermYear)
+  return useRootApi(`${path}?year=${year}&quarter=${term}`)
 }
