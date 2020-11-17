@@ -38,15 +38,21 @@ def campus_api(path: str, methods=None):
         @application.route(f'/<campus>/{path}', methods=(methods or ['GET']))
         @wraps(func)
         def api(campus, *args, **kwargs):
-            year = request.args.get('year')
-            quarter = request.args.get('quarter')
-
-            if not (year and quarter):
-                current_term = database.current_term(campus)
-                year = current_term['year']
-                quarter = current_term['term']
-
             try:
+                year = request.args.get('year')
+                quarter = request.args.get('quarter')
+
+                if year and not quarter or quarter and not year:
+                    raise ApiError(
+                        404,
+                        'Both year and quarter have to be specified!'
+                    )
+
+                if not (year and quarter):
+                    current_term = database.current_term(campus)
+                    year = current_term['year']
+                    quarter = current_term['term']
+
                 try:
                     db = database.load(campus, year, quarter)
                     ret = func(db, *args, **kwargs)
