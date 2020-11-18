@@ -91,6 +91,11 @@ class ClassDataSchema(Schema):
         return data
 
 
+def clean_instructor_name(name):
+    # Replace ', ' with '', '(P)' with '', '   ' (n spaces) with ' ' (one space)
+    return re.sub(r'\s+', ' ', re.sub(r'(?:, )|(?:\(\w?\))', '', name)).strip()
+
+
 class ClassTimeSchema(Schema):
     type = fields.Str()
 
@@ -98,7 +103,7 @@ class ClassTimeSchema(Schema):
     # time = fields.Str(required=True)
     start_time = fields.Str(required=True)
     end_time = fields.Str(required=True)
-    instructor = fields.Str(required=True)
+    instructor = fields.List(fields.Str(), required=True)
     location = fields.Str(required=True)
     room = fields.Str()
     campus = fields.Str()
@@ -154,6 +159,15 @@ class ClassTimeSchema(Schema):
             # TODO: "unknown" instead of "TBA"
             if not replaced:
                 data['days'] = 'TBA'
+
+        return data
+
+    @pre_load
+    def split_instructor(self, data, **kwargs):
+        instructors = data.get('instructor')
+
+        if instructors and isinstance(instructors, str):
+            data['instructor'] = [clean_instructor_name(instructor.strip()) for instructor in instructors.split(',')]
 
         return data
 
