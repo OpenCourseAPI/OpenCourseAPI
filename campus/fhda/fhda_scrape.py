@@ -4,6 +4,7 @@ import argparse
 from os.path import join
 from copy import deepcopy
 from collections import defaultdict
+from shutil import move
 
 from titlecase import titlecase
 
@@ -16,7 +17,7 @@ from scraper.ssb_public_schedule import ScheduleScraper
 from .fhda_login import login
 from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR
 from .fhda_utils import clean_course_name_str
-from .fhda_scrape_seats import main as scrape_seats
+from .fhda_scrape_seats import scrape_seats
 
 
 def fix_title(title: str):
@@ -132,10 +133,12 @@ def run_advanced_scraper(**kwargs):
 
 
 def run_public_schedule_scraper(**kwargs):
+    if not kwargs.get('db_dir'):
+        kwargs['db_dir'] = DB_DIR
+
     try:
         scraper = ScheduleScraper(
             ssb_url=SSB_URL,
-            db_dir=DB_DIR,
             cache_dir=CACHE_DIR,
             hooks=FHDAScraperHooks,
             # login=login,
@@ -150,8 +153,9 @@ def run_public_schedule_scraper(**kwargs):
 
 
 if __name__ == '__main__':
-    ENABLE_ADVANCED = True
+    ENABLE_ADVANCED = False
     ENABLE_SCHEDULE = True
+    ENABLE_SEATS = True
 
     parser = argparse.ArgumentParser(description='Scrape FHDA data')
     parser.add_argument('--update', default=False, action='store_true',
@@ -159,12 +163,19 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.update:
+        temp_dir = join(DB_DIR, 'temp')
         run_public_schedule_scraper(
+            db_dir=temp_dir,
             max_terms=2,
             use_cache=False
         )
         write_metadata()
-        scrape_seats()
+        terms = scrape_seats(db_dir=temp_dir, prefix='sched_')
+
+        for term in terms:
+            filename = f'sched_{term}_database.json'
+            move(join(temp_dir, filename), join(DB_DIR, filename))
+
     else:
         if ENABLE_ADVANCED:
             run_advanced_scraper(
@@ -174,8 +185,11 @@ if __name__ == '__main__':
             )
         if ENABLE_SCHEDULE:
             run_public_schedule_scraper(
-                max_terms=16,
+                max_terms=2,
                 # use_cache=False,
                 # start_term='202042',
             )
+        if ENABLE_SEATS:
+            scrape_seats(db_dir=DB_DIR)
+
         write_metadata()

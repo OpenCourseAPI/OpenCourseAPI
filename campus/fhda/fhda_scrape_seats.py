@@ -13,22 +13,26 @@ from bs4 import BeautifulSoup
 from tinydb import TinyDB, where
 from marshmallow import Schema, fields, validate, EXCLUDE, ValidationError
 
-from logger import log_info, log_err
+from logger import log_info, log_warn, log_err
 from data.models import seatInfoSchema
 from .fhda_settings import DB_DIR, SSB_URL, HEADERS, CURRENT_TERM_CODES
 from .fhda_scrape_term import mine
 
 PREFIX = 'sched_'
 
-def main():
-    if not exists(DB_DIR):
-        makedirs(DB_DIR, exist_ok=True)
+def scrape_seats(db_dir=DB_DIR, prefix=PREFIX):
+    if not exists(db_dir):
+        makedirs(db_dir, exist_ok=True)
 
-    for term in CURRENT_TERM_CODES.values():
+    terms = list(CURRENT_TERM_CODES.values())
+
+    log_info(f'Started FHDA seats scraper for terms {", ".join(terms)}')
+
+    for term in terms:
         classes = parse(mine(term))
         log_info(f'Scraped {len(classes)} classes in term {term}')
 
-        db = TinyDB(join(DB_DIR, f'{PREFIX}{term}_database.json'))
+        db = TinyDB(join(db_dir, f'{PREFIX}{term}_database.json'))
         new_docs = []
 
         for clazz in db.table('classes'):
@@ -38,18 +42,20 @@ def main():
                 seat_info = classes.pop(CRN)
             except KeyError:
                 seat_info = {'seats': 0, 'wait_seats': 0, 'wait_cap': 0, 'status': 'unknown'}
-                log_err(f'{clazz["raw_course"]} is not included in the seat scraper data.', details={
+                log_warn(f'{clazz["raw_course"]} is not included in the seat scraper data.', details={
                     'CRN': CRN
                 })
 
             new_docs.append({**clazz, **seat_info})
 
         for clazz in classes.values():
-            log_err(f'{clazz["CRN"]} from seat scraper data is not in the main data.')
+            log_warn(f'CRN {clazz["CRN"]} from seat scraper data is not in the main data.')
 
         db.table('classes').truncate()
         db.table('classes').insert_multiple(new_docs)
         db.close()
+
+    return terms
 
 
 def parse(content):
@@ -104,4 +110,4 @@ def parse(content):
 
 
 if __name__ == "__main__":
-    main()
+    scrape_seats()
