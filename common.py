@@ -16,11 +16,6 @@ class ClassResourceSchema(Schema):
     dept = fields.Str()
     course = fields.Str()
 
-    @validates_schema(skip_on_field_errors=True)
-    def validate(self, data, *args, **kwargs):
-        if not data.get('CRN') or data.get('dept'):
-            raise ValidationError('At least "CRN" or "dept" have to be specified.')
-
 
 class BatchClassesSchema(Schema):
     '''

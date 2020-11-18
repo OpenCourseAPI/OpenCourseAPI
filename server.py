@@ -130,16 +130,17 @@ def api_batch_classes(db):
         course = resource.get('course')
 
         if crn:
-            return database.one_class_by_crn(db, crn)
+            data = database.one_class_by_crn(db, crn)
         elif dept and course:
-            return database.all_classes_in_course(db, dept, course)
+            data = database.all_classes_in_course(db, dept, course)
         elif dept:
-            return database.all_classes_in_dept(db, dept)
+            data = database.all_classes_in_dept(db, dept)
         else:
-            # TODO: should it return None instead?
-            return {'error': 'IDK what you asked for.'}
+            return {'status': 'error', 'error': 'At least "CRN" or "dept" have to be specified.'}
 
-    return {'resources': list(map(get_resource, resources))}
+        return {'status': 'success', 'data': data}
+
+    return {'resources': [get_resource(resource) for resource in resources]}
 
 
 @campus_api('classes/<crn>')
