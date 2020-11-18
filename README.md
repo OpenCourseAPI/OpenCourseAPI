@@ -43,7 +43,7 @@ All endpoints (except for `/:campus`) support the following query parameters:
 
 Example: [/da/depts?year=2019&quarter=fall](https://opencourse.dev/da/depts?year=2019&quarter=fall)
 
-#### `/:campus`
+#### `GET /:campus`
 
 Example: [/fh](https://opencourse.dev/fh)
 
@@ -90,7 +90,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/courses`
+#### `GET /:campus/courses`
 
 Example: [/fh/courses](https://opencourse.dev/fh/courses)
 
@@ -124,7 +124,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/classes`
+#### `GET /:campus/classes`
 
 Example: [/fh/classes](https://opencourse.dev/fh/classes)
 
@@ -169,7 +169,142 @@ Sample Response
 </details>
 
 
-#### `/:campus/classes/:crn`
+#### `POST /:campus/classes`
+
+Get **selected classes** in a batch request.
+
+##### Body Schema
+
+```js
+{
+  resources: Resource[]
+}
+```
+
+##### Resource Schema
+
+Combinations: `CRN`, `dept`, or `dept` + `course`
+
+```js
+{
+  CRN: number,
+  dept: string,
+  course: string
+}
+```
+
+
+##### Response Schema
+```js
+{
+  resources: [
+    {
+      status: 'success' | 'error',
+      error: string,
+      data: Class | Class[] | null
+    }
+  ]
+}
+```
+
+<details>
+<summary>
+Sample Body & Response
+</summary>
+
+Body:
+
+```js
+{
+  resources: [
+    { dept: 'CS', course: '1A' },
+    { dept: 'CS', course: '2B' },
+    { CRN: 20211 },
+    {} // Invalid
+  ]
+}
+```
+
+Response:
+
+```json
+{
+  "resources": [
+    {
+      "status": "success",
+      "data": [
+        {
+          "CRN": 30239,
+          "raw_course": "C S F001A01Z",
+          "dept": "CS",
+          "course": "1A",
+          "section": "01Z",
+          "title": "Object-Oriented Programming Methodologies in Java",
+          "units": 4.5,
+          "start": "01/04/2021",
+          "end": "03/26/2021",
+          "times": ["..."],
+          "status": "open",
+          "seats": 40,
+          "wait_seats": 10,
+          "wait_cap": 10
+        },
+        {"...": "..."}
+      ]
+    },
+    {
+      "status": "success",
+      "data": [
+        {
+          "CRN": 30239,
+          "raw_course": "C S F001A01Z",
+          "dept": "CS",
+          "course": "1A",
+          "section": "01Z",
+          "title": "Object-Oriented Programming Methodologies in Java",
+          "units": 4.5,
+          "start": "01/04/2021",
+          "end": "03/26/2021",
+          "times": ["..."],
+          "status": "open",
+          "seats": 40,
+          "wait_seats": 10,
+          "wait_cap": 10
+        },
+        {"...": "..."}
+      ]
+    },
+    {
+      "status": "success",
+      "data": {
+        "CRN": 30324,
+        "raw_course": "ACTG F001C03W",
+        "dept": "ACTG",
+        "course": "1C",
+        "section": "03W",
+        "title": "Managerial Accounting",
+        "units": 5,
+        "start": "01/04/2021",
+        "end": "03/26/2021",
+        "times": ["..."],
+        "status": "open",
+        "seats": 40,
+        "wait_seats": 15,
+        "wait_cap": 15
+      }
+    },
+    {
+      "status": "error",
+      "error": "At least \"CRN\" or \"dept\" have to be specified."
+    }
+  ]
+}
+```
+
+</details>
+
+
+#### `GET /:campus/classes/:crn`
 
 Example: [/fh/classes/20238](https://opencourse.dev/fh/classes/20238)
 
@@ -211,7 +346,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/depts`
+#### `GET /:campus/depts`
 
 Example: [/fh/depts](https://opencourse.dev/fh/depts)
 
@@ -242,7 +377,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/depts/:dept`
+#### `GET /:campus/depts/:dept`
 
 Example: [/fh/depts/GLST](https://opencourse.dev/fh/depts/GLST)
 
@@ -263,7 +398,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/depts/:dept/classes`
+#### `GET /:campus/depts/:dept/classes`
 
 Example: [/fh/depts/MATH/classes](https://opencourse.dev/fh/depts/MATH/classes)
 
@@ -308,7 +443,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/depts/:dept/courses`
+#### `GET /:campus/depts/:dept/courses`
 
 Example: [/fh/depts/MATH/courses](https://opencourse.dev/fh/depts/MATH/courses)
 
@@ -353,7 +488,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/depts/:dept/courses/:course`
+#### `GET /:campus/depts/:dept/courses/:course`
 
 Example: [/fh/depts/MATH/courses/1A](https://opencourse.dev/fh/depts/MATH/courses/1A)
 
@@ -385,7 +520,7 @@ Sample Response
 </details>
 
 
-#### `/:campus/depts/:dept/courses/:course/classes`
+#### `GET /:campus/depts/:dept/courses/:course/classes`
 
 Example: [/fh/depts/MATH/courses/1A/classes](https://opencourse.dev/fh/depts/MATH/courses/1A/classes)
 
