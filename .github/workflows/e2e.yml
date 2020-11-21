@@ -13,7 +13,8 @@ jobs:
       uses: cypress-io/github-action@v2
       with:
         working-directory: frontend
-        start: yarn start
+        build: yarn run build
+        start: yarn run start:static
         wait-on: 'http://localhost:8080'
         browser: chrome
         headless: true
