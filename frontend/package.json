@@ -10,7 +10,8 @@
     "start": "snowpack dev",
     "start:static": "node scripts/static-server.js",
     "build": "snowpack build",
-    "test:e2e": "cypress open"
+    "test": "yarn run test:e2e",
+    "test:e2e": "cypress run"
   },
   "dependencies": {
     "match-sorter": "^4.2.0",
