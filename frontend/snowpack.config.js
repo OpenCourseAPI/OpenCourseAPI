@@ -16,7 +16,11 @@ module.exports = {
   },
   plugins: [
     // Optimize production builds with Webpack
-    ['@snowpack/plugin-webpack', {}]
+    '@snowpack/plugin-webpack',
+    // Babel
+    '@snowpack/plugin-babel',
+    // Preact Fast Refresh
+    '@prefresh/snowpack'
   ],
   proxy: {
     '/api': API_URL,
