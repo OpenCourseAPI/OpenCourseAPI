@@ -641,7 +641,18 @@ To build for production, use:
 yarn run build
 ```
 
-The generated static files are in `frontend/build`.
+The generated static files are in `frontend/build`. To run a static server to serve the built files, use:
+
+```bash
+yarn run start:static
+```
+
+To run tests, use the following:
+
+```bash
+yarn test # run all tests
+yarn test:e2e # only run end-to-end tests
+```
 
 
 ## Contribute
