@@ -179,9 +179,9 @@ if __name__ == '__main__':
     else:
         if ENABLE_ADVANCED:
             run_advanced_scraper(
-                max_terms=8,
+                max_terms=12,
                 # use_cache=False,
-                start_term='202112',
+                start_term='202132',
             )
         if ENABLE_SCHEDULE:
             run_public_schedule_scraper(
