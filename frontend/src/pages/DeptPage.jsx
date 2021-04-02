@@ -6,6 +6,7 @@ import { campus, PATH_PREFIX } from '../data'
 import { setIntersection, formatDate } from '../utils'
 import { useApi } from '../state'
 import { CampusNotFound, DeptNotFound } from '../components/NotFound'
+import { Fade } from '../components/Transitions'
 import Header from '../components/Header'
 import Search from '../components/Search'
 import ClassesTable from '../components/ClassTable'
@@ -138,34 +139,38 @@ export default function DeptPage({ college, dept, setCourse }) {
           </div>
         ) : (
           <>
-            <h3 style={{ marginTop: '1.5em' }}>Courses</h3>
-            <div class={`course-card-container ${view}`}>{cards}</div>
-            <h3 style={{ marginTop: '1.5em' }}>All Classes</h3>
-            <ClassesTable
-              headers={headers}
-              classes={postFilterClasses}
-              getClassColumns={(section, lastSection) => {
-                const start = formatDate(section.start, dateFormatOpts)
-                const end = formatDate(section.end, dateFormatOpts)
+            <Fade in={!!courses} duration={300}>
+              <h3 style={{ marginTop: '1.5em' }}>Courses</h3>
+              <div class={`course-card-container ${view}`}>{cards}</div>
+            </Fade>
+            <Fade in={!!(courses && classes)} duration={300}>
+              <h3 style={{ marginTop: '1.5em' }}>All Classes</h3>
+              <ClassesTable
+                headers={headers}
+                classes={postFilterClasses}
+                getClassColumns={(section, lastSection) => {
+                  const start = formatDate(section.start, dateFormatOpts)
+                  const end = formatDate(section.end, dateFormatOpts)
 
-                const courseName = `${section.dept} ${section.course}`
-                const lastCourseName = lastSection && `${lastSection.dept} ${lastSection.course}`
-                const sameCourse = courseName == lastCourseName
-                const courseLink = `${PATH_PREFIX}/${college}/dept/${section.dept}/course/${section.course}${window.location.search}`
+                  const courseName = `${section.dept} ${section.course}`
+                  const lastCourseName = lastSection && `${lastSection.dept} ${lastSection.course}`
+                  const sameCourse = courseName == lastCourseName
+                  const courseLink = `${PATH_PREFIX}/${college}/dept/${section.dept}/course/${section.course}${window.location.search}`
 
-                return [
-                  sameCourse ? '' : <Link href={courseLink}>{courseName}</Link>,
-                  sameCourse ? '' : `${section.title}`,
-                  section.CRN.toString().padStart(5, '0'),
-                  `${start} - ${end}`,
-                  ...(hasSeatInfo ? [
-                    section.status,
-                    section.seats,
-                    section.wait_cap ? `${section.wait_seats}/${section.wait_cap}` : section.wait_seats
-                  ] : [])
-                ]
-              }}
-            />
+                  return [
+                    sameCourse ? '' : <Link href={courseLink}>{courseName}</Link>,
+                    sameCourse ? '' : `${section.title}`,
+                    section.CRN.toString().padStart(5, '0'),
+                    `${start} - ${end}`,
+                    ...(hasSeatInfo ? [
+                      section.status,
+                      section.seats,
+                      section.wait_cap ? `${section.wait_seats}/${section.wait_cap}` : section.wait_seats
+                    ] : [])
+                  ]
+                }}
+              />
+            </Fade>
           </>
         )}
       </>

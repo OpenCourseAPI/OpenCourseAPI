@@ -5,9 +5,6 @@ import SelectSearch from 'react-select-search'
 import { campus, PATH_PREFIX } from '../data'
 import LandingGraphic from '../components/LandingGraphic'
 
-import 'react-select-search/style.css'
-import '../landing.css'
-
 const ChooseInstitute = () => {
   const options = campus.map(({ name, id }) => ({ name, value: id }));
 

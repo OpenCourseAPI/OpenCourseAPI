@@ -5,6 +5,7 @@ import matchSorter from 'match-sorter'
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import { CampusNotFound } from '../components/NotFound'
+import { Fade } from '../components/Transitions'
 import Header from '../components/Header'
 import Search from '../components/Search'
 import BreadCrumbs from '../components/BreadCrumbs'
@@ -72,9 +73,11 @@ export default function CollegePage({ college }) {
       <div class="root">
         <BreadCrumbs stack={crumbs} />
         <Header title={colleged.name} />
-        <h3>Departments</h3>
-        <Search query={query} setQuery={setQuery} placeholder="Filter departments..." />
-        <div class={`dept-card-container ${view}`}>{cards}</div>
+        <Fade in={!!depts} duration={300}>
+          <h3>Departments</h3>
+          <Search query={query} setQuery={setQuery} placeholder="Filter departments..." />
+          <div class={`dept-card-container ${view}`}>{cards}</div>
+        </Fade>
       </div>
     )
   )

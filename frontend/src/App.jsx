@@ -1,11 +1,13 @@
-import { h } from 'preact'
-import { useCallback, useErrorBoundary } from 'preact/hooks'
-import { Router } from 'preact-router'
+import { h, Fragment } from 'preact'
+import { useCallback, useEffect, useErrorBoundary, useState } from 'preact/hooks'
+import { Router, exec, getCurrentUrl, subscribers } from 'preact-router'
+import Match from 'preact-router/match';
 
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
 import HomePage from './pages/HomePage'
+import RouteContainer from './components/RouteContainer'
 import { PageNotFound, CampusNotFound, ErrorPage, Loading } from './components/NotFound'
 import { PATH_PREFIX } from './data'
 import { TermYear, CampusInfo, useRootApi } from './state'
@@ -30,10 +32,35 @@ function WrapCampus({ college, year, term, page: Page, ...props }) {
   )
 }
 
+const routes = {
+  '/': (props) => <HomePage {...props} />,
+  [`${PATH_PREFIX}/:college`]: (props) => (
+    <WrapCampus {...props} page={CollegePage}/>
+  ),
+  [`${PATH_PREFIX}/:college/dept/:dept`]: (props) => (
+    <WrapCampus {...props} page={DeptPage}/>
+  ),
+  [`${PATH_PREFIX}/:college/dept/:dept/course/:course`]: (props) => (
+    <WrapCampus {...props} page={CoursePage}/>
+  ),
+}
+
 export default function App() {
   const [error, resetError] = useErrorBoundary(
     error => console.error(error)
   )
+
+  const getRouteMatches = () => (
+    Object.entries(routes)
+      .map(([path, component]) => [
+        path,
+        component,
+        exec(getCurrentUrl(), path, {})
+      ])
+  )
+
+  const [routeMatches, setRouteMatches] = useState(getRouteMatches)
+  const routeAlreadyMatched = routeMatches.some(([path, component, matches]) => matches !== false)
 
   const onPageChange = useCallback((event) => {
     const urlParts = (url) => url.split('/').length
@@ -42,17 +69,25 @@ export default function App() {
     } else {
       document.body.classList.remove('going-back')
     }
+    setRouteMatches(getRouteMatches())
   }, [])
 
   if (error) return <ErrorPage />
 
   return (
     <Router onChange={onPageChange}>
-      <HomePage path="/" />
-      <WrapCampus path={`${PATH_PREFIX}/:college`} page={CollegePage}/>
-      <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept`} page={DeptPage}/>
-      <WrapCampus path={`${PATH_PREFIX}/:college/dept/:dept/course/:course`} page={CoursePage}/>
-      <PageNotFound default />
+      <Fragment default>
+        {routeMatches.map(([path, Component, matches]) => (
+          <RouteContainer
+            component={Component}
+            match={matches}
+          />
+        ))}
+        <RouteContainer
+          component={() => <PageNotFound />}
+          match={!routeAlreadyMatched}
+        />
+      </Fragment>
     </Router>
   )
 }

@@ -132,14 +132,14 @@
 
 @media (max-width: 800px) {
     .landing h1 {
-        font-size: 2.2em;
+        font-size: 2.5em;
     }
     .landing .subtext {
-        font-size: 1.2em;
+        font-size: 1.4em;
     }
     .landing-container .select-container {
-        margin-top: 1.5em;
-        margin-bottom: 1.5em;
+        margin-top: 2.5em;
+        margin-bottom: 2.5em;
     }
     .landing-container .select-container .select-search__input {
         padding: 0.5em 0.8em;
@@ -155,5 +155,17 @@
     }
     .landing-container .select-container {
         width: 100%;
+    }
+}
+@media (max-width: 500px) {
+    .landing h1 {
+        font-size: 2.2em;
+    }
+    .landing .subtext {
+        font-size: 1.2em;
+    }
+    .landing-container .select-container {
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
     }
 }

@@ -18,7 +18,8 @@
     "preact": "^10.4.8",
     "preact-router": "^3.2.1",
     "prop-types": "^15.7.2",
-    "react-select-search": "^2.2.4"
+    "react-select-search": "^2.2.4",
+    "react-transition-group": "^4.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",

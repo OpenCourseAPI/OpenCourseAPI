@@ -21,22 +21,13 @@
   --link: rgb(81, 167, 238);
 }
 
-@keyframes fadeInFromRight {
-  from { opacity: 0; transform: translateX(8px); }
-  to { opacity: 1; }
-}
-@keyframes fadeInFromLeft {
-  from { opacity: 0; transform: translateX(-8px); }
-  to { opacity: 1; }
-}
-
 * {
   box-sizing: inherit;
 }
 html {
   box-sizing: border-box;
 }
-html, button, input, select, th, td {
+html, button, input, select {
   font-family: "Nunito", sans-serif;
   line-height: 1.5;
 }
@@ -46,6 +37,8 @@ body {
   padding: 0;
   min-height: 100%;
   width: 100%;
+  /* height: 100%; */
+  overflow-x: hidden;
 }
 body {
   background: var(--background);
@@ -54,12 +47,6 @@ body {
 
 .root {
   padding: 3em;
-}
-.root:not(.landing-container) {
-  animation: fadeInFromRight 0.3s 0.1s backwards ease-out;
-}
-.going-back .root {
-  animation: fadeInFromLeft 0.3s 0.1s backwards ease-out;
 }
 
 @media (max-width: 500px) {
@@ -208,7 +195,6 @@ h3 {
   display: block;
 }
 .classes {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   width: 100%;
 }

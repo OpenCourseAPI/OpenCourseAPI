@@ -6,6 +6,7 @@ import { formatDate } from '../utils'
 import BreadCrumbs from '../components/BreadCrumbs'
 import ClassesTable from '../components/ClassTable'
 import Header from '../components/Header'
+import { Fade } from '../components/Transitions'
 import { CampusNotFound, CourseNotFound } from '../components/NotFound'
 
 const dateFormatOpts = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -48,7 +49,7 @@ export default function CoursePage({ college, dept, course }) {
     content = <CourseNotFound backLink={crumbs[crumbs.length - 2].url} />
   } else {
     content = (
-      <>
+      <Fade in={!!classes} duration={300}>
         <p style={{ marginTop: 0 }}>
           {(first && first.title) || ''}&nbsp; · &nbsp;{first ? first.units : 'X'} units
         </p>
@@ -71,7 +72,7 @@ export default function CoursePage({ college, dept, course }) {
             ]
           }}
         />
-      </>
+      </Fade>
     )
   }
 

@@ -1,0 +1,61 @@
+.page-enter, .page-exit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.page-enter {
+  opacity: 0;
+  transform: translateX(6px);
+}
+.going-back .page-enter {
+  transform: translateX(-6px);
+}
+.page-enter-active {
+  opacity: 1;
+  overflow: hidden;
+  height: 100%;
+  transition: opacity 250ms 150ms, transform 250ms 150ms;
+  transform: translateX(0);
+}
+.going-back .page-enter-active {
+  transform: translateX(0);
+}
+
+.page-exit {
+  opacity: 1;
+  overflow: 'hidden';
+  height: 100%;
+  transform: translateX(0);
+}
+.going-back .page-exit {
+  transform: translateX(0);
+}
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 200ms, transform 200ms;
+  transform: translateX(-6px);
+}
+.going-back .page-exit-active {
+  transform: translateX(6px);
+}
+
+.fade-enter {
+  opacity: 0;
+  transform: translateY(4px) scale(1);
+}
+.fade-enter-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 300ms, transform 300ms;
+}
+.fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-exit-active {
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 300ms, transform 300ms;
+}
