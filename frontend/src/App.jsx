@@ -1,44 +1,14 @@
 import { h } from 'preact'
 import { useCallback, useErrorBoundary } from 'preact/hooks'
-import { Router, route } from 'preact-router'
+import { Router } from 'preact-router'
 
 import CollegePage from './pages/CollegePage'
 import DeptPage from './pages/DeptPage'
 import CoursePage from './pages/CoursePage'
+import HomePage from './pages/HomePage'
 import { PageNotFound, CampusNotFound, ErrorPage, Loading } from './components/NotFound'
-import { campus, PATH_PREFIX } from './data'
+import { PATH_PREFIX } from './data'
 import { TermYear, CampusInfo, useRootApi } from './state'
-
-function CampusCard({ id, name, image, setCollege }) {
-  return (
-    <div class="card campus" onClick={() => setCollege(id)}>
-      <div class="image">
-        <img src={image} />
-      </div>
-      <div class="name">{name}</div>
-    </div>
-  )
-}
-
-function HomePage() {
-  const campusCards = campus.map(({ id, name, image }) => (
-    <CampusCard
-      id={id}
-      name={name}
-      image={image}
-      setCollege={(campus) => route(`${PATH_PREFIX}/${campus}${window.location.search}`)}
-    />
-  ))
-
-  return (
-    <div class="root">
-      <h1>Choose a College</h1>
-      <div class="campus-card-container">
-        {campusCards}
-      </div>
-    </div>
-  )
-}
 
 function WrapCampus({ college, year, term, page: Page, ...props }) {
   const [meta, error, loading] = useRootApi(`/${college}`)
