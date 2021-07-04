@@ -167,6 +167,7 @@ if __name__ == '__main__':
         run_public_schedule_scraper(
             db_dir=temp_dir,
             max_terms=2,
+            start_term='202212',
             use_cache=False
         )
         write_metadata()

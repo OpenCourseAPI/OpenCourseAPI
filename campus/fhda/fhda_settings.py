@@ -15,10 +15,10 @@ COURSE_NAME_PATTERN = r'[FD]0*(\d+\w*)\.?'
 
 # Year and term info
 CURRENT_YEAR = 2021
-CURRENT_TERM = 'spring'
+CURRENT_TERM = 'summer'
 
 # Campus term codes (Foothill & De Anza)
-CURRENT_TERM_CODES = {'fh': '202141', 'da': '202142'}
+CURRENT_TERM_CODES = {'fh': '202211', 'da': '202212'}
 
 '''
 Course Type Flags - Foothill College
