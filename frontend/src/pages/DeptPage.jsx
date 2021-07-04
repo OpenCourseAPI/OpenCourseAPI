@@ -4,29 +4,14 @@ import { route } from 'preact-router'
 import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
-import { setIntersection } from '../utils'
+import { setIntersection, formatDate } from '../utils'
 import { useApi } from '../state'
 import { CampusNotFound, DeptNotFound } from '../components/NotFound'
 import Header from '../components/Header'
+import ClassesTable from '../components/ClassTable'
 import BreadCrumbs from '../components/BreadCrumbs'
 
-// const opt = { year: 'numeric', month: 'short', day: 'numeric' }
-const opt = { month: 'short', day: 'numeric' }
-const formatDate = (str) => new Date(Date.parse(str)).toLocaleDateString('en-US', opt)
-const replaceTBA = (text) => text === 'TBA' ? <span class="none">(none)</span> : text
-
-const displayTimes = (time) => {
-  const time_string = time.start_time == 'TBA' ? replaceTBA('TBA') : `${time.start_time} - ${time.end_time}`
-  return (
-    <>
-      <td>{time.instructor}</td>
-      <td>{replaceTBA(time.days)}</td>
-      <td>{time_string}</td>
-      <td>{time.location}</td>
-    </>
-  )
-    // <td>${time.room}</td>
-}
+const dateFormatOpts = { month: 'short', day: 'numeric' }
 
 // function DeptCard({ id, name, count, subinfo, setDept }) {
 function DeptCard({ id, name, dept, course, title, count, subinfo, setDept }) {
@@ -58,9 +43,18 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   useEffect(() => {
     if (courses && classes) {
+      const getInstructors = item => item.times
+        .map(time => time.instructor).join(',')
+      //   .map(time => (
+      //     (time.instructor || []).map(
+      //       ({ full_name, display_name }) => display_name || full_name
+      //     ))
+      //   )
+      //   .join(' ')
+
       const filteredClasses = matchSorter(classes, query, {
         keys: [
-          {minRanking: matchSorter.rankings.MATCHES, key: item => item.times.map(time => time.instructor).join(',')},
+          {minRanking: matchSorter.rankings.MATCHES, key: getInstructors },
           {threshold: matchSorter.rankings.EQUAL, key: 'course'},
           {threshold: matchSorter.rankings.CONTAINS, key: 'title'},
           item => item.dept + ' ' + item.course,
@@ -102,46 +96,24 @@ export default function DeptPage({ college, dept, setCourse }) {
   // const view = 'card-view'
 
   const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true
-  const headers = ['CRN', 'Course', 'Title', 'Dates', ...(hasSeatInfo ? ['Status', 'Seats', 'Waitlist'] : []), 'Professor', 'Days', 'Time', 'Location']
-  const row_els = []
-
   const postFilterClasses = (query && filteredClasses) || classes
-  if (postFilterClasses && postFilterClasses.length) {
-    for (const section of postFilterClasses) {
-      const start = formatDate(section.start)
-      const end = formatDate(section.end)
-
-      const rows = section.times.length
-      const table_rows = [
-        section.CRN.toString().padStart(5, '0'),
-        `${section.dept} ${section.course}`,
-        `${section.title}`,
-        `${start} - ${end}`,
-        // end,
-        ...(hasSeatInfo ? [
-          section.status,
-          section.seats,
-          section.wait_cap ? `${section.wait_seats}/${section.wait_cap}` : section.wait_seats
-        ] : [])
-      ]
-
-      row_els.push(
-        <tr>
-          {table_rows.map((name) => <td rowspan={rows}>{name}</td>)}
-          {displayTimes(section.times[0])}
-        </tr>
-      )
-
-      for (const time of section.times.slice(1)) {
-        row_els.push(
-          <tr>
-            {displayTimes(time)}
-          </tr>
-        )
-      }
-    }
-  }
-
+  const headers = [
+    'CRN',
+    'Course',
+    'Title',
+    'Dates',
+    ...(
+      hasSeatInfo ? [
+        'Status',
+        'Seats',
+        'Waitlist'
+      ] : []
+    ),
+    'Professor',
+    'Days',
+    'Time',
+    'Location',
+  ]
   const crumbs = [
     { url: '/', name: 'Home' },
     { url: `${PATH_PREFIX}/${college}${window.location.search}`, name: colleged.name },
@@ -158,18 +130,26 @@ export default function DeptPage({ college, dept, setCourse }) {
         <h3>Courses</h3>
         <div class={`course-card-container ${view}`}>{cards}</div>
         <h3 style={{ marginTop: '2em' }}>All Classes</h3>
-        <div class="table-container" style={{ fontSize: '14px' }}>
-          <table class="classes data">
-            <thead>
-              <tr>
-                {headers.map((name) =>  <th>{name}</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {row_els}
-            </tbody>
-          </table>
-        </div>
+        <ClassesTable
+          headers={headers}
+          classes={postFilterClasses}
+          getClassColumns={(section) => {
+            const start = formatDate(section.start, dateFormatOpts)
+            const end = formatDate(section.end, dateFormatOpts)
+
+            return [
+              section.CRN.toString().padStart(5, '0'),
+              `${section.dept} ${section.course}`,
+              `${section.title}`,
+              `${start} - ${end}`,
+              ...(hasSeatInfo ? [
+                section.status,
+                section.seats,
+                section.wait_cap ? `${section.wait_seats}/${section.wait_cap}` : section.wait_seats
+              ] : [])
+            ]
+          }}
+        />
       </>
     )
   }
