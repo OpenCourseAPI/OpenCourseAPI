@@ -54,7 +54,7 @@ function WrapCampus({ college, year, term, page: Page, ...props }) {
   return (
     <TermYear.Provider value={{term, year}}>
       <CampusInfo.Provider value={meta || {}}>
-        <Page college={college} {...props}/>
+        <Page college={college} {...props} />
       </CampusInfo.Provider>
     </TermYear.Provider>
   )

@@ -8,7 +8,7 @@ const replaceTBA = (text) => (
     : text
 )
 
-function ClassTimeCols({ time }) {
+export function defaultGetClassTimeColumns(time) {
   const timeString = time.start_time == 'TBA'
     ? replaceTBA('TBA')
     : `${time.start_time || '?'} - ${time.end_time || '?'}`
@@ -27,40 +27,70 @@ function ClassTimeCols({ time }) {
   //   })
   //   .flat()
 
-  return (
-    <>
-      <td>{instructors || '?'}</td>
-      <td>{replaceTBA(time.days || '?')}</td>
-      <td>{timeString || '?'}</td>
-      <td>{time.location || '?'}</td>
-    </>
-  )
+  return [
+    instructors || '?',
+    replaceTBA(time.days || '?'),
+    timeString || '?',
+    time.location || '?',
+  ]
 }
 
-export default function ClassesTable({ headers, classes, getClassColumns }) {
-  if (!classes) return <></>
+export default function ClassesTable({
+  headers,
+  classes,
+  getClassColumns,
+  loading = false,
+  placeholders = 0,
+  getClassTimeColumns = defaultGetClassTimeColumns
+}) {
+  const tableRowGroups = []
 
-  const tableRowEls = []
+  if (!loading && classes) {
+    for (let i = 0; i < classes.length; i++) {
+      const tableRowEls = []
+      const section = classes[i]
+      const lastSection = i > 0 ? classes[i - 1] : null
+      const numRows = section.times.length || 1
+      const tableCols = getClassColumns(section, lastSection)
+      const timeCols = getClassTimeColumns(section.times[0] || {})
 
-  for (const section of classes) {
-    const numRows = section.times.length || 1
-    const tableCols = getClassColumns(section)
-
-    tableRowEls.push(
-      <tr>
-        {tableCols.map((name) => <td rowspan={numRows}>{name}</td>)}
-        <ClassTimeCols time={section.times[0] || {}} />
-      </tr>
-    )
-
-    for (const time of section.times.slice(1)) {
-      if (!time) continue
       tableRowEls.push(
         <tr>
-          <ClassTimeCols time={time} />
+          {tableCols.map((name) => <td rowspan={numRows}>{name}</td>)}
+          {timeCols.map((name) => <td>{name}</td>)}
+        </tr>
+      )
+
+      for (const time of section.times.slice(1)) {
+        if (!time) continue
+
+        tableRowEls.push(
+          <tr>
+            {getClassTimeColumns(time).map((name) => <td>{name}</td>)}
+          </tr>
+        )
+      }
+
+      tableRowGroups.push(
+        <tbody>
+          {tableRowEls}
+        </tbody>
+      )
+    }
+  } else {
+    const placeholderRows = []
+
+    for (let i = 0; i < placeholders; i++) {
+      placeholderRows.push(
+        <tr>
+          <td colSpan={headers.length + 1}>
+            <div class="row-placeholder"></div>
+          </td>
         </tr>
       )
     }
+
+    tableRowGroups.push(<tbody>{placeholderRows}</tbody>)
   }
 
   return (
@@ -71,9 +101,7 @@ export default function ClassesTable({ headers, classes, getClassColumns }) {
             {headers.map((name) => <th>{name}</th>)}
           </tr>
         </thead>
-        <tbody>
-          {tableRowEls}
-        </tbody>
+        {tableRowGroups}
       </table>
     </div>
   )

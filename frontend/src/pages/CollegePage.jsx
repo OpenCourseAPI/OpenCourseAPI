@@ -1,6 +1,5 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import { route } from 'preact-router'
 import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
@@ -8,18 +7,23 @@ import { useApi } from '../state'
 import { CampusNotFound } from '../components/NotFound'
 import Header from '../components/Header'
 import BreadCrumbs from '../components/BreadCrumbs'
+import Link from '../components/Link'
 
-function DeptCard({ id, name, subinfo, setDept }) {
+function DeptCard({ college, dept, name, subinfo }) {
   return (
-    <div class="card dept" onClick={() => setDept(id)}>
+    <Link
+      href={`${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`}
+      className="card dept"
+      unstyle
+    >
       <div class="name">{name}</div>
       <div style={{'flex': 1}}></div>
       <div class="more-info">{subinfo}</div>
-    </div>
+    </Link>
   )
 }
 
-export default function CollegePage({ college, setDept }) {
+export default function CollegePage({ college }) {
   const colleged = campus.find((cmp) => cmp.id === college)
 
   if (!colleged) return <CampusNotFound />
@@ -44,10 +48,10 @@ export default function CollegePage({ college, setDept }) {
   const postFilterDepts = (query && filteredDepts) || depts
   const cards = postFilterDepts && postFilterDepts.length ? postFilterDepts.map(({ id: deptId, name }) => (
     <DeptCard
-      id={deptId}
+      college={college}
+      dept={deptId}
       name={name}
-      subinfo='12 courses'
-      setDept={(dept) => route(`${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`)}
+      subinfo=''
     />
   )) : []
 

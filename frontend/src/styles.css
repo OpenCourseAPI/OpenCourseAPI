@@ -209,6 +209,11 @@ h3 {
   /* border-top: solid 3px #74a0d6;
   border-bottom: solid 3px #74a0d6; */
 }
+.row-placeholder {
+  height: 1em;
+  width: 100%;
+  display: block;
+}
 .classes {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   /* border-spacing: 4px; */
@@ -246,7 +251,7 @@ h3 {
 /* .classes tr:nth-child(even) {
   background-color: #f2f2f2;
 } */
-.classes tbody tr:hover {
+.classes tbody:hover tr {
   background-color: var(--foreground-hover);
 }
 .classes th {

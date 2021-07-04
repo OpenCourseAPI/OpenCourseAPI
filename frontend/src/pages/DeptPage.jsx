@@ -1,6 +1,5 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
-import { route } from 'preact-router'
 import matchSorter from 'match-sorter'
 
 import { campus, PATH_PREFIX } from '../data'
@@ -9,23 +8,26 @@ import { useApi } from '../state'
 import { CampusNotFound, DeptNotFound } from '../components/NotFound'
 import Header from '../components/Header'
 import ClassesTable from '../components/ClassTable'
+import Link from '../components/Link'
 import BreadCrumbs from '../components/BreadCrumbs'
 
 const dateFormatOpts = { month: 'short', day: 'numeric' }
 
-// function DeptCard({ id, name, count, subinfo, setDept }) {
-function DeptCard({ id, name, dept, course, title, count, subinfo, setDept }) {
+function CourseCard({ college, dept, course, title, count, subinfo }) {
   return (
-    <div class="card course" onClick={() => setDept(id)}>
-      {/* <div class="name">{name}</div> */}
+    <Link
+      className="card course"
+      href={`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}${window.location.search}`}
+      unstyle
+    >
       <span class="course-id">{dept} {course}</span>
-      <div style={{'flex': 1}}></div>
+      <div style={{ flex: 1 }}></div>
       <div class="more-info">
         <span class="counter">{count}</span>
         <span class="counter-label">{subinfo}</span>
       </div>
       <div class="name">{title}</div>
-    </div>
+    </Link>
   )
 }
 
@@ -76,16 +78,13 @@ export default function DeptPage({ college, dept, setCourse }) {
   const postFilterCourses = (query && filteredCourses) || courses
   const cards = postFilterCourses && postFilterCourses.length
     ? postFilterCourses.map(({ dept, course, title, classes }) => (
-      <DeptCard
-        id={course}
+      <CourseCard
+        college={college}
         dept={dept}
         course={course}
         title={title}
-        name={`${dept} ${course}: ${title}`}
         count={classes.length}
         subinfo={`class${classes.length > 1 ? 'es' : ''}`}
-        // subinfo={`${classes.length} class${classes.length > 1 ? 'es' : ''}`}
-        setDept={(course) => route(`${PATH_PREFIX}/${college}/dept/${dept}/course/${course}${window.location.search}`)}
       />
     ))
     : []
@@ -95,12 +94,12 @@ export default function DeptPage({ college, dept, setCourse }) {
   // const view = 'breadcrumb-view'
   // const view = 'card-view'
 
-  const hasSeatInfo = classes && classes[0] ? (classes[0].status && classes[0].seats != undefined) : true
+  const hasSeatInfo = (classes || []).some((cl) => cl.status && cl.status !== 'unknown')
   const postFilterClasses = (query && filteredClasses) || classes
   const headers = [
-    'CRN',
     'Course',
     'Title',
+    'CRN',
     'Dates',
     ...(
       hasSeatInfo ? [
@@ -133,14 +132,19 @@ export default function DeptPage({ college, dept, setCourse }) {
         <ClassesTable
           headers={headers}
           classes={postFilterClasses}
-          getClassColumns={(section) => {
+          getClassColumns={(section, lastSection) => {
             const start = formatDate(section.start, dateFormatOpts)
             const end = formatDate(section.end, dateFormatOpts)
 
+            const courseName = `${section.dept} ${section.course}`
+            const lastCourseName = lastSection && `${lastSection.dept} ${lastSection.course}`
+            const sameCourse = courseName == lastCourseName
+            const courseLink = `${PATH_PREFIX}/${college}/dept/${section.dept}/course/${section.course}${window.location.search}`
+
             return [
+              sameCourse ? '' : <Link href={courseLink}>{courseName}</Link>,
+              sameCourse ? '' : `${section.title}`,
               section.CRN.toString().padStart(5, '0'),
-              `${section.dept} ${section.course}`,
-              `${section.title}`,
               `${start} - ${end}`,
               ...(hasSeatInfo ? [
                 section.status,
