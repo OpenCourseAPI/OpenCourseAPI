@@ -17,7 +17,7 @@ export default function CoursePage({ college, dept, course }) {
   const [classes, error] = useApi(`/${college}/depts/${dept}/courses/${course}/classes`)
 
   const first = classes && classes[0]
-  const hasSeatInfo = first ? (first.status && first.seats != undefined) : false
+  const hasSeatInfo = (classes || []).some((cl) => cl.status && cl.status !== 'unknown')
   const headers = [
     'CRN',
     'Start',
