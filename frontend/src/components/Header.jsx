@@ -1,15 +1,13 @@
-import { h, Fragment } from 'preact'
+import { h } from 'preact'
 
 import TermPicker from './TermPicker'
-import Search from './Search'
 
-export default function Header(props) {
-  const {query, setQuery} = props
-
+export default function Header({ title }) {
   return (
-    <>
-      <Search query={query} setQuery={setQuery}/>
+    <div class="title-container">
+      <h1>{title}</h1>
+      <div style="flex: 1"></div>
       <TermPicker />
-    </>
+    </div>
   )
 }

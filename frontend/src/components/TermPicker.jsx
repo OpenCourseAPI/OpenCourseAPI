@@ -28,7 +28,7 @@ export default function TermPicker() {
 
   return (
     <div class="select-wrapper">
-      <select class="form-item" onChange={callback} value={`${term}-${year}`}>
+      <select onChange={callback} value={`${term}-${year}`}>
         {options.map(({ name, value }) => <option value={value}>{name}</option>)}
       </select>
       {DropdownIcon}

@@ -1,16 +1,18 @@
 import { h } from 'preact'
 import { useCallback } from 'preact/hooks'
 
-export default function Search(props) {
-  const {query, setQuery} = props
-
+export default function Search({ query, setQuery, placeholder }) {
   const callback = useCallback((event) => {
     setQuery(event.target.value)
   }, [setQuery])
 
   return (
     <div class="input-wrapper">
-      <input class="form-item" onInput={callback} placeholder={'Search...'} value={query} />
+      <input
+        onInput={callback}
+        placeholder={placeholder}
+        value={query}
+      />
     </div>
   )
 }

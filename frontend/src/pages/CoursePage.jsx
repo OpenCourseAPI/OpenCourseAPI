@@ -5,6 +5,7 @@ import { useApi } from '../state'
 import { formatDate } from '../utils'
 import BreadCrumbs from '../components/BreadCrumbs'
 import ClassesTable from '../components/ClassTable'
+import Header from '../components/Header'
 import { CampusNotFound, CourseNotFound } from '../components/NotFound'
 
 const dateFormatOpts = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -77,7 +78,7 @@ export default function CoursePage({ college, dept, course }) {
   return (
     <div class="root">
       <BreadCrumbs stack={crumbs} />
-      <h1 style={{ marginBottom: '1em' }}>{dept} {course} @ {colleged.name}</h1>
+      <Header title={`${dept} ${course} @ ${colleged.name}`} />
       {content}
     </div>
   )

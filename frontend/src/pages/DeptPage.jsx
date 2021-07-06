@@ -7,6 +7,7 @@ import { setIntersection, formatDate } from '../utils'
 import { useApi } from '../state'
 import { CampusNotFound, DeptNotFound } from '../components/NotFound'
 import Header from '../components/Header'
+import Search from '../components/Search'
 import ClassesTable from '../components/ClassTable'
 import Link from '../components/Link'
 import BreadCrumbs from '../components/BreadCrumbs'
@@ -126,34 +127,47 @@ export default function DeptPage({ college, dept, setCourse }) {
   } else {
     content = (
       <>
-        <h3>Courses</h3>
-        <div class={`course-card-container ${view}`}>{cards}</div>
-        <h3 style={{ marginTop: '2em' }}>All Classes</h3>
-        <ClassesTable
-          headers={headers}
-          classes={postFilterClasses}
-          getClassColumns={(section, lastSection) => {
-            const start = formatDate(section.start, dateFormatOpts)
-            const end = formatDate(section.end, dateFormatOpts)
-
-            const courseName = `${section.dept} ${section.course}`
-            const lastCourseName = lastSection && `${lastSection.dept} ${lastSection.course}`
-            const sameCourse = courseName == lastCourseName
-            const courseLink = `${PATH_PREFIX}/${college}/dept/${section.dept}/course/${section.course}${window.location.search}`
-
-            return [
-              sameCourse ? '' : <Link href={courseLink}>{courseName}</Link>,
-              sameCourse ? '' : `${section.title}`,
-              section.CRN.toString().padStart(5, '0'),
-              `${start} - ${end}`,
-              ...(hasSeatInfo ? [
-                section.status,
-                section.seats,
-                section.wait_cap ? `${section.wait_seats}/${section.wait_cap}` : section.wait_seats
-              ] : [])
-            ]
-          }}
+        <Search
+          placeholder="Filter by course, title, professor, or CRN..."
+          query={query}
+          setQuery={setQuery}
         />
+        {(query && !cards.length) ? (
+          <div style={{ marginTop: '2em' }}>
+            No matches for "{query}"! Try searching for something else.
+          </div>
+        ) : (
+          <>
+            <h3 style={{ marginTop: '1.5em' }}>Courses</h3>
+            <div class={`course-card-container ${view}`}>{cards}</div>
+            <h3 style={{ marginTop: '1.5em' }}>All Classes</h3>
+            <ClassesTable
+              headers={headers}
+              classes={postFilterClasses}
+              getClassColumns={(section, lastSection) => {
+                const start = formatDate(section.start, dateFormatOpts)
+                const end = formatDate(section.end, dateFormatOpts)
+
+                const courseName = `${section.dept} ${section.course}`
+                const lastCourseName = lastSection && `${lastSection.dept} ${lastSection.course}`
+                const sameCourse = courseName == lastCourseName
+                const courseLink = `${PATH_PREFIX}/${college}/dept/${section.dept}/course/${section.course}${window.location.search}`
+
+                return [
+                  sameCourse ? '' : <Link href={courseLink}>{courseName}</Link>,
+                  sameCourse ? '' : `${section.title}`,
+                  section.CRN.toString().padStart(5, '0'),
+                  `${start} - ${end}`,
+                  ...(hasSeatInfo ? [
+                    section.status,
+                    section.seats,
+                    section.wait_cap ? `${section.wait_seats}/${section.wait_cap}` : section.wait_seats
+                  ] : [])
+                ]
+              }}
+            />
+          </>
+        )}
       </>
     )
   }
@@ -161,11 +175,7 @@ export default function DeptPage({ college, dept, setCourse }) {
   return (
     <div class="root">
       <BreadCrumbs stack={crumbs} />
-      <div class="title-container">
-        <h1>{dept} @ {colleged.name}</h1>
-        <div style="flex: 1"></div>
-        <Header query={query} setQuery={setQuery}/>
-      </div>
+      <Header title={`${dept} @ ${colleged.name}`} />
       {content}
     </div>
   )

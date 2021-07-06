@@ -1,0 +1,159 @@
+.landing-container, .landing-container button, .landing-container input, .landing-container select {
+    font-family: "Poppins", sans-serif;
+}
+.landing-container {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    width: 100%;
+}
+
+.landing {
+    min-height: 100vh;
+    padding: 2em;
+    color: #EEE;
+    background: var(--landing-gradient);
+}
+.landing .content {
+    padding-top: 2em;
+    max-width: 1100px;
+    margin: auto;
+}
+.landing .intro {
+    display: flex;
+}
+.landing .intro-info {
+    flex: 3;
+    padding-right: 10%;
+}
+.landing .pictorial {
+    flex: 2;
+    transform: skew(3deg, -3deg);
+    transition: 0.4s transform;
+}
+.landing .pictorial:hover {
+    transform: skew(-4deg, 4deg);
+}
+.landing .pictorial svg {
+    width: 100%;
+    padding-left: 2em;
+}
+.landing .pictorial svg rect {
+    transition: 0.2s fill-opacity;
+    fill-opacity: 0.7;
+}
+.landing .pictorial:hover svg rect {
+    fill-opacity: 0.8;
+}
+.landing h1 {
+    font-size: 3em;
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+}
+.landing .subtext {
+    font-size: 1.5em;
+    color: #CCCCCC;
+}
+
+.landing-container nav {
+    display: flex;
+    margin: 0 -1em;
+}
+.landing-container nav > div {
+    margin: 0 1em;
+}
+.landing-container nav .spacer {
+    flex: 1;
+}
+
+.landing-container .select-container {
+    margin-top: 4em;
+    margin-bottom: 3em;
+    width: 70%;
+}
+.landing-container .select-container .select-search {
+    width: 100%;
+}
+.landing-container .select-container .select-search__input {
+    padding: 0.8em 1.2em;
+    font-size: 20px;
+    letter-spacing: 1px;
+    height: unset;
+}
+.landing-container .select-container .select-search__select {
+    top: 80px;
+}
+.landing-container .select-container .select-search__options {
+    padding-left: 0;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.landing-container .try-it {
+    display: flex;
+    margin: 0 -16px;
+    margin-bottom: 4em;
+}
+.landing-container .try-it .link {
+    position: relative;
+    transition: 0.4s all;
+    margin: 0 16px;
+    color: #DDD;
+    font-weight: 600;
+    cursor: pointer;
+}
+.landing-container .try-it .label {
+    margin: 0 1em;
+}
+.landing-container .try-it .link:hover {
+    transform: translateY(-2px);
+    color: #EEE;
+}
+.landing-container .try-it .link:hover::after {
+    transform: translateX(8px) scaleX(-2);
+}
+.landing-container .try-it .link::after {
+    transition: 0.4s all;
+    position: absolute;
+    content: "";
+    width: 2em;
+    height: 2px;
+    background-color: white;
+    bottom: -12px;
+    left: 1em;
+}
+
+.landing-container footer {
+    text-align: center;
+    padding: 2em;
+    border-top: solid 1px #444;
+    background-color: var(--background);
+}
+
+@media (max-width: 800px) {
+    .landing h1 {
+        font-size: 2.2em;
+    }
+    .landing .subtext {
+        font-size: 1.2em;
+    }
+    .landing-container .select-container {
+        margin-top: 1.5em;
+        margin-bottom: 1.5em;
+    }
+    .landing-container .select-container .select-search__input {
+        padding: 0.5em 0.8em;
+        font-size: 16px;
+    }
+    .landing-container .select-container .select-search__select {
+        top: 60px;
+    }
+}
+@media (max-width: 700px) {
+    .landing-container .landing .pictorial {
+        display: none;
+    }
+    .landing-container .select-container {
+        width: 100%;
+    }
+}

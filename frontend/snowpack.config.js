@@ -24,5 +24,9 @@ module.exports = {
   ],
   proxy: {
     '/api': API_URL,
+  },
+  alias: {
+    react: 'preact/compat',
+    'react-dom': 'preact/compat',
   }
 }

@@ -56,7 +56,11 @@ export default function ClassesTable({
 
       tableRowEls.push(
         <tr>
-          {tableCols.map((name) => <td rowspan={numRows}>{name}</td>)}
+          {tableCols.map((name, index) => (
+            <td class={index === 0 ? 'first' : ''} rowspan={numRows}>
+              {name}
+            </td>
+          ))}
           {timeCols.map((name) => <td>{name}</td>)}
         </tr>
       )
@@ -98,7 +102,9 @@ export default function ClassesTable({
       <table class="classes data">
         <thead>
           <tr>
-            {headers.map((name) => <th>{name}</th>)}
+            {headers.map((name, index) => (
+              <th class={index === 0 ? 'first' : ''}>{name}</th>
+            ))}
           </tr>
         </thead>
         {tableRowGroups}

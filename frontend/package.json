@@ -16,7 +16,9 @@
   "dependencies": {
     "match-sorter": "^4.2.0",
     "preact": "^10.4.8",
-    "preact-router": "^3.2.1"
+    "preact-router": "^3.2.1",
+    "prop-types": "^15.7.2",
+    "react-select-search": "^2.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",

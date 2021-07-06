@@ -6,6 +6,7 @@ import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
 import { CampusNotFound } from '../components/NotFound'
 import Header from '../components/Header'
+import Search from '../components/Search'
 import BreadCrumbs from '../components/BreadCrumbs'
 import Link from '../components/Link'
 
@@ -70,12 +71,9 @@ export default function CollegePage({ college }) {
     ) : (
       <div class="root">
         <BreadCrumbs stack={crumbs} />
-        <div class="title-container">
-          <h1>{colleged.name}</h1>
-          <div style="flex: 1"></div>
-          <Header query={query} setQuery={setQuery}/>
-        </div>
+        <Header title={colleged.name} />
         <h3>Departments</h3>
+        <Search query={query} setQuery={setQuery} placeholder="Filter departments..." />
         <div class={`dept-card-container ${view}`}>{cards}</div>
       </div>
     )
