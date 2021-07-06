@@ -1,6 +1,7 @@
 import { h } from 'preact'
 import { route } from 'preact-router'
 import SelectSearch from 'react-select-search'
+import { Helmet } from 'react-helmet'
 
 import { campus, PATH_PREFIX } from '../data'
 import LandingGraphic from '../components/LandingGraphic'
@@ -25,6 +26,9 @@ const ChooseInstitute = () => {
 export default function HomePage() {
   return (
     <div class="root landing-container">
+      <Helmet>
+        <title>opencourse.dev | Find the courses & classes you need</title>
+      </Helmet>
       <div class="landing">
         <nav>
           <div>opencourse.dev</div>
@@ -36,7 +40,7 @@ export default function HomePage() {
           <div class="intro">
             <div class="intro-info">
               <h1>Find the courses & classes you need</h1>
-              <div class="subtext">Get access to courses, classes, professors, and more in an effortless way.</div>
+              <div class="subtext">Effortlessly search for courses, classes, and professors at your institute.</div>
             </div>
             <div class="pictorial">
               <LandingGraphic />

@@ -1,4 +1,5 @@
 import { h, Fragment } from 'preact'
+import { Helmet } from 'react-helmet'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
@@ -78,6 +79,9 @@ export default function CoursePage({ college, dept, course }) {
 
   return (
     <div class="root">
+      <Helmet>
+        <title>{dept} {course} | {colleged.name} | opencourse.dev</title>
+      </Helmet>
       <BreadCrumbs stack={crumbs} />
       <Header title={`${dept} ${course} @ ${colleged.name}`} />
       {content}

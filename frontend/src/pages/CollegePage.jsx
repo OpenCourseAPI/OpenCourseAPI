@@ -1,6 +1,7 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import matchSorter from 'match-sorter'
+import { Helmet } from 'react-helmet'
 
 import { campus, PATH_PREFIX } from '../data'
 import { useApi } from '../state'
@@ -71,6 +72,9 @@ export default function CollegePage({ college }) {
       <CampusNotFound />
     ) : (
       <div class="root">
+        <Helmet>
+          <title>{colleged.name} | opencourse.dev</title>
+        </Helmet>
         <BreadCrumbs stack={crumbs} />
         <Header title={colleged.name} />
         <Fade in={!!depts} duration={300}>

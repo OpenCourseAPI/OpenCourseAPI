@@ -1,6 +1,7 @@
 import { h, Fragment } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import matchSorter from 'match-sorter'
+import { Helmet } from 'react-helmet'
 
 import { campus, PATH_PREFIX } from '../data'
 import { setIntersection, formatDate } from '../utils'
@@ -179,6 +180,9 @@ export default function DeptPage({ college, dept, setCourse }) {
 
   return (
     <div class="root">
+      <Helmet>
+        <title>{dept} | {colleged.name} | opencourse.dev</title>
+      </Helmet>
       <BreadCrumbs stack={crumbs} />
       <Header title={`${dept} @ ${colleged.name}`} />
       {content}
