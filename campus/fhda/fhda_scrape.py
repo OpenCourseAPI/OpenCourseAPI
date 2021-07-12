@@ -15,7 +15,7 @@ from scraper.ssb_auth_schedule import AdvancedScraper
 from scraper.ssb_public_schedule import ScheduleScraper
 
 from .fhda_login import login
-from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR
+from .fhda_settings import SSB_URL, DB_DIR, CACHE_DIR, CURRENT_TERM_CODES
 from .fhda_utils import clean_course_name_str
 from .fhda_scrape_seats import scrape_seats
 
@@ -167,7 +167,7 @@ if __name__ == '__main__':
         run_public_schedule_scraper(
             db_dir=temp_dir,
             max_terms=2,
-            start_term='202212',
+            start_term=CURRENT_TERM_CODES['da'],
             use_cache=False
         )
         write_metadata()
