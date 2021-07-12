@@ -622,7 +622,7 @@ cd OpenCourseAPI
 pipenv install # install all python dependencies
 
 python -m campus.fhda.fhda_scrape # scrape Foothill / De Anza College
-pythom -m campus.wvm.wvm_scrape # scrape West Valley / Mission College
+python -m campus.wvm.wvm_scrape # scrape West Valley / Mission College
 
 python server.py # start the server
 ```
