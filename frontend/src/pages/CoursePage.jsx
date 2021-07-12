@@ -39,7 +39,7 @@ export default function CoursePage({ college, dept, course }) {
   ]
   const crumbs = [
     { url: '/', name: 'Home' },
-    { url: `${PATH_PREFIX}/${college}`, name: colleged.name },
+    { url: `${PATH_PREFIX}/${college}${window.location.search}`, name: colleged.name },
     { url: `${PATH_PREFIX}/${college}/dept/${dept}${window.location.search}`, name: dept },
     { url: `${PATH_PREFIX}/${college}/dept/${dept}/course/${course}${window.location.search}`, name: course },
   ]
