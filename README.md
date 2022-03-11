@@ -6,7 +6,7 @@ An open-source API to scrape, process, and serve college course and class data �
 
 ## Features
 
-- 🔍&nbsp; Scrapes **terms, deptartments, courses, and classes**
+- 🔍&nbsp; Scrapes **terms, departments, courses, and classes**
 - 🧩&nbsp; **Campus-agnostic architecture** allows easy extensibility
 - 📅&nbsp; Currently serves **10+ years** of just FHDA data
 - 🏫&nbsp; Scrapes a total of **4 colleges** (adding more is just a matter of time)
