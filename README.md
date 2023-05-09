@@ -662,7 +662,6 @@ All contributions are welcome! A contribution guide is TBA.. but you can start b
 ### Core Team
 
 - [**Madhav Varshney**](https://github.com/madhavarshney)
-- [**Kishan Emens**](https://github.com/phi-line)
 
 
 ## License
