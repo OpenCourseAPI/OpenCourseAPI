@@ -8,7 +8,7 @@ CACHE_DIR = join(ROOT_CACHE_DIR, 'wvm')
 
 # Year and term info
 CURRENT_YEAR = 2023
-CURRENT_TERM = 'summer'
+CURRENT_TERM = 'fall'
 
 # Campus term codes (West Valley & Mission)
-CURRENT_TERM_CODES = {'wv': '202350', 'mc': '202350'}
+CURRENT_TERM_CODES = {'wv': '202370', 'mc': '202370'}
